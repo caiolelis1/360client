@@ -39,7 +39,7 @@ function Administrador(){
     async function selecionaSubsistemas(){
         return Axios.post("http://localhost:3001/api/selecionaSubsistemas", {
         }).then((response)=>{
-            console.log(response.data)
+            console.log(response.data);
             setSubsistemas(response.data);
             dados.setSubsistemas(subsistemas);
             selecionaPessoas();
