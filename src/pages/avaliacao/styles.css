@@ -1,0 +1,57 @@
+h2{
+    background-color: #CCCCCC;
+}
+h3{
+    color:#CCCCCC;
+    background-color: #0D0D0D;
+}
+
+.pageAvaliacao {
+    text-align: center;
+}
+
+.blocoPessoa {
+    background-color: #CCCCCC;
+    border: 10%;
+}
+
+.login {
+    background-color: rgb(162, 218, 236);
+    border: 10%;
+}
+
+.registro {
+    background-color: rgb(147, 195, 211);
+    border: 10%;
+}
+
+.tituloSubsistema {
+    text-transform:uppercase;
+    background-color: #0D0D0D;
+    color: #4ed840;
+    font-size: 40px;
+}
+
+.tituloNomePessoa {
+    text-transform:uppercase;
+    font-style: initial;
+    font-size: 17px;
+    font-weight: bold;
+    background-color: #4ed840;
+    color: #0D0D0D;
+}
+
+.tituloTipoAvaliacao {
+    text-transform:uppercase;
+    font-weight: 300;
+    font-size: 15px;
+    background-color: #CCCCCC;
+}
+
+input {
+    font-weight: 600;
+}
+
+button {
+    font-weight: 600;
+}
