@@ -37,7 +37,7 @@ function Administrador(){
 
     //seleciona todos subsistemas, coloca no state e chama função selecionaPessoas(logo abaixo)
     async function selecionaSubsistemas(){
-        return Axios.post("http://localhost:3001/api/selecionaSubsistemas", {
+        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas", {
         }).then((response)=>{
             console.log(response.data);
             setSubsistemas(response.data);
@@ -48,7 +48,7 @@ function Administrador(){
 
     //seleciona todas pessoas, coloca no state e chama função selecionaAvaliacoes(logo abaixo)
     async function selecionaPessoas(){
-        return Axios.post("http://localhost:3001/api/selecionaPessoas", {
+        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaPessoas", {
         }).then((response)=>{
             console.log(response.data)
             setPessoas(response.data);
@@ -59,7 +59,7 @@ function Administrador(){
 
     //seleciona todas avaliações,e coloca no state e chama função imprimeBlocos(logo abaixo)
     async function selecionaAvaliacoes(){
-        return Axios.post("http://localhost:3001/api/selecionaAvaliacoes", {
+        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoes", {
         }).then((response)=>{
             console.log(response.data)
             setAvaliacoes(response.data);

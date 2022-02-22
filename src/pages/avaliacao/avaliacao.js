@@ -31,7 +31,7 @@ function Avaliacao(){
     //função para enviar avaliação para o banco de dados, linha 52
     const fazRequisicaoAvaliacao = (anorecebido,edicaorecebido,referenciaidpessoarecebido,referenciaidtipoavaliacaorecebido,notarecebido) => {
 
-        Axios.post("http://localhost:3001/api/insertAvaliacao", {
+        Axios.post("https://avaliacao-360.herokuapp.com/api/insertAvaliacao", {
 
             ano: anorecebido,
             edicao: edicaorecebido,
@@ -181,7 +181,7 @@ function Avaliacao(){
 
       //seleciona todas pessoas e guarda no state e chama imprimeBlocos (logo acima)
     async function selecionaPessoas(){
-        return Axios.post("http://localhost:3001/api/selecionaPessoas", {
+        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaPessoas", {
         }).then((response)=>{
             setPessoas(response.data);
             dados.setPessoas(pessoas);
@@ -191,7 +191,7 @@ function Avaliacao(){
 
     //seleciona todos subsistemas e guarda no state e chama selecionaPessoas (logo acima)
     async function selecionaSubsistemas(){
-        return Axios.post("http://localhost:3001/api/selecionaSubsistemas", {
+        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas", {
         }).then((response)=>{
             setSubsistemas(response.data);
             dados.setSubsistemas(subsistemas);

@@ -12,7 +12,7 @@ const Registro = () => {
 
     const registrar = () => {
 
-        Axios.post("http://localhost:3001/api/registrar", {
+        Axios.post("https://avaliacao-360.herokuapp.com/api/registrar", {
             usuario: usuario,
             subsistema: subsistema,
             nome: nome,
