@@ -14,7 +14,7 @@ const Login = () => {
 
     const login = () => {
 
-        Axios.post("http://localhost:3001/api/login", {
+        Axios.post("https://avaliacao-360.herokuapp.com/api/login", {
             usuario: usuario,
             senha: senha,
         }).then((response)=>{
