@@ -13,10 +13,10 @@ function App(){
     <Provider>
     <Router>
       <Switch>
-      <Route exact path="/administrador" component= {Administrador}/>
-      <Route exact path="/avaliacao" component= {Avaliacao}/>
-      <Route exact path="/login" component= {Login}/>
-      <Route exact path="/registro" component= {Registro}/>
+        <Route exact path="/administrador" component= {Administrador}/>
+        <Route exact path="/avaliacao" component= {Avaliacao}/>
+        <Route exact path="/login" component= {Login}/>
+        <Route exact path="/registro" component= {Registro}/>
       </Switch>
     </Router>
     </Provider>
