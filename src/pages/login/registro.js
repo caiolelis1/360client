@@ -41,19 +41,16 @@ const Registro = () => {
     }
 
     const buscarSubsistemas = () => {
-        console.log("buscando subsistemas!")
         Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas').then((response) => {
             if(response.data.message){
                 console.log(response.data.message)
             } else{
-                console.log("achou subsistemas!")
                 setSubsistemas(response.data)
             }
         })
     }
 
     useEffect(() => {
-        console.log("use effect acontecendo!")
         buscarSubsistemas();
     },[])
 
@@ -72,7 +69,7 @@ const Registro = () => {
                     </Grid>
                     <InputLabel>Subsistema</InputLabel>
                         <Select label="Subsitema" fullWidth required onChange={(e)=>{setSubsistema(e.target.value)}}>
-                            <MenuItem value={null}>Escolha seu subsistema</MenuItem>
+                            <MenuItem active value={null}>Escolha seu subsistema</MenuItem>
                             {subsistemas.map((subsistema) =>(
                                 <MenuItem key={subsistema.idsubsistema} value={subsistema.idsubsistema}>{subsistema.nome}</MenuItem>
                             ))}
