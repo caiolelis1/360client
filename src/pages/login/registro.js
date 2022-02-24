@@ -4,7 +4,7 @@ import { Grid, styled, Paper, TextField, Button, Select, InputLabel, MenuItem, T
 import TeslaLogo from './logo_tesla1.jpg'
 const Registro = () => {
 
-    const [subsistemas, setSubsistemas] = useState();
+    const [subsistemas, setSubsistemas] = useState([]);
     const [subsistema, setSubsistema] = useState();
     const [usuario, setUsuario] = useState();
     const [nome, setNome] = useState();
@@ -52,7 +52,7 @@ const Registro = () => {
         })
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log("use effect acontecendo!")
         buscarSubsistemas();
     },[])
