@@ -41,7 +41,7 @@ function Avaliacao(){
 
         }).then((response)=>{
             alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
-            window.location.replace("http://localhost:3000/login")
+            window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
             //console.log(response);
         })
 
