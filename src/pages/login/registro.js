@@ -53,6 +53,7 @@ const Registro = () => {
     }
 
     useEffect(()=>{
+        console.log("use effect acontecendo!")
         buscarSubsistemas();
     },[])
 
