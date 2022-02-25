@@ -38,7 +38,7 @@ function Avaliacao(){
             }
             if(response.data[0].admin==1){
                 console.log("Este usuário é admin!")
-            
+            }
         })
     }
 
