@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect } from "react-router-dom";
 import { DadosUnstated } from '../avaliacao/dadosunstated.js';
 import {useUnstated } from '@gitbook/unstated';
-import { isAuthenticated } from '../../services/auth';
+import { isAuthenticated, getTokenUser } from '../../services/auth';
 
 function Administrador(){
 
@@ -158,6 +158,7 @@ function Administrador(){
 
       useEffect(()=>{
         selecionaSubsistemas()
+        console.log(getTokenUser());
       }, [])
 
     return<>{isAuthenticated() ?
