@@ -33,7 +33,12 @@ function Avaliacao(){
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
-            console.log(response.data[0]);
+            if(response.data[0].avaliou==1){
+                console.log("Este usuário já respondeu!")
+            }
+            if(response.data[0].admin==1){
+                console.log("Este usuário é admin!")
+            
         })
     }
 
