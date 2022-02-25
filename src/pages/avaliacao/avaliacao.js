@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
 import { DadosUnstated } from './dadosunstated.js';
 import {useUnstated } from '@gitbook/unstated';
-import { isAuthenticated } from '../../services/auth';
+import { isAuthenticated, getTokenUser } from '../../services/auth';
 import { Grid, styled, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Paper, Button, Container } from "@material-ui/core"
 import { format } from "date-fns";
 import './styles.css';
