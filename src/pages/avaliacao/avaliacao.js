@@ -1,5 +1,5 @@
 import { Redirect } from "react-router-dom";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
 import { DadosUnstated } from './dadosunstated.js';
 import {useUnstated } from '@gitbook/unstated';
@@ -12,6 +12,7 @@ function Avaliacao(){
 
     const [subsistemas, setSubsistemas] = useState([]);
     const [pessoas, setPessoas] = useState([]);
+    const [userId, setUserId] = useState();
     const [data] = useState(new Date());
 
     const containerStyle={padding: 20, margin:"20px auto", maxWidth:1200};
@@ -27,6 +28,14 @@ function Avaliacao(){
         borderColor: '#999999',
     })
     
+
+    const buscarUser = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+            userid: id,
+        }).then((response) => {
+            console.log(response.data[0]);
+        })
+    }
 
     //função para enviar avaliação para o banco de dados, linha 52
     const fazRequisicaoAvaliacao = (anorecebido,edicaorecebido,referenciaidpessoarecebido,referenciaidtipoavaliacaorecebido,notarecebido) => {
@@ -199,6 +208,11 @@ function Avaliacao(){
         });
     }
 
+
+    useEffect(()=>{
+        setUserId(getTokenUser().id);
+        buscarUser(userId);
+    }, [])
 
     return <>{isAuthenticated() ?
         <div>

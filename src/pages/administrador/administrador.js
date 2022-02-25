@@ -7,6 +7,7 @@ import { isAuthenticated, getTokenUser } from '../../services/auth';
 
 function Administrador(){
 
+    const [userId, setUserId] = useState();
     const [subsistemas, setSubsistemas] = useState([]);
     const [pessoas, setPessoas] = useState([]);
     const [avaliacoes, setAvaliacoes] = useState([]);
@@ -15,6 +16,15 @@ function Administrador(){
 
     const dados = useUnstated(DadosUnstated);
 
+
+    const buscarUser = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+            userid: id,
+        }).then((response) => {
+            console.log(response.data[0]);
+        })
+    }
+    
     //faz a media de um tipo das avaliações de uma pessoa
     function media(id,tipo){
 
@@ -158,7 +168,8 @@ function Administrador(){
 
       useEffect(()=>{
         selecionaSubsistemas()
-        console.log(getTokenUser());
+        setUserId(getTokenUser().id);
+        buscarUser(userId);
       }, [])
 
     return<>{isAuthenticated() ?
