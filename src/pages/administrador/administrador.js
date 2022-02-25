@@ -36,11 +36,13 @@ function Administrador(){
         let media = 0;
         for(let i in result) {
 
-            result[i].nota = parseInt(result[i].nota, 10);
+            if(result[i].nota){
+                
+                result[i].nota = parseInt(result[i].nota, 10);
 
-            console.log(result[i].nota)
+                media += result[i].nota;
+            }
 
-            media += result[i].nota;
         }
 
         media = media/result.length;
