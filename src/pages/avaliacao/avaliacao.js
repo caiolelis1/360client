@@ -54,6 +54,7 @@ function Avaliacao(){
             nota: notarecebido,
 
         }).then((response)=>{
+            
             alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
             window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
             //console.log(response);

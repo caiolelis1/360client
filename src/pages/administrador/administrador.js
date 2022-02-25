@@ -38,6 +38,8 @@ function Administrador(){
 
             result[i].nota = parseInt(result[i].nota, 10);
 
+            console.log(result[i].nota)
+
             media += result[i].nota;
         }
 
@@ -51,7 +53,6 @@ function Administrador(){
     async function selecionaSubsistemas(){
         return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas", {
         }).then((response)=>{
-            console.log(response.data);
             setSubsistemas(response.data);
             dados.setSubsistemas(subsistemas);
             selecionaPessoas();
@@ -62,7 +63,6 @@ function Administrador(){
     async function selecionaPessoas(){
         return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaPessoas", {
         }).then((response)=>{
-            console.log(response.data)
             setPessoas(response.data);
             dados.setPessoas(pessoas);
             selecionaAvaliacoes();
@@ -73,7 +73,6 @@ function Administrador(){
     async function selecionaAvaliacoes(){
         return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoes", {
         }).then((response)=>{
-            console.log(response.data)
             setAvaliacoes(response.data);
             dados.setAvaliacoes(avaliacoes);
             imprimeBlocos();
