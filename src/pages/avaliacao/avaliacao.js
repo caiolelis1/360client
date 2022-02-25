@@ -211,8 +211,11 @@ function Avaliacao(){
 
     useEffect(()=>{
         setUserId(getTokenUser().id);
-        buscarUser(userId);
     }, [])
+
+    useEffect(()=>{
+        buscarUser(userId);
+    }, [userId])
 
     return <>{isAuthenticated() ?
         <div>
