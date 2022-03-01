@@ -190,9 +190,7 @@ function Administrador(){
                 <div>
                     {blocos}
                 </div>
-                {subsistemas.map((subsistema) =>(
-                        <h1>{subsistema.nome}</h1>
-                    ))}
+                
                 </div>
             </div>
         </div>
