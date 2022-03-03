@@ -34,7 +34,7 @@ function Avaliacao(){
             userid: id,
         }).then((response) => {
             if(response.data[0].avaliou==1){
-                console.log("Este usuário já respondeu!")
+                window.location.replace("https://youthful-euclid-69864e.netlify.app/avaliou")
             }
             if(response.data[0].admin==1){
                 console.log("Este usuário é admin!")
@@ -52,7 +52,25 @@ function Avaliacao(){
             referenciaidpessoa: referenciaidpessoarecebido,
             referenciaidtipoavaliacao: referenciaidtipoavaliacaorecebido,
             nota: notarecebido,
-            userid: userId,
+
+        }).then((response)=>{
+            
+            alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
+            window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
+            //console.log(response);
+        })
+
+    }
+
+    const fazRequisicaoAvaliacao = () => {
+
+        Axios.post("https://avaliacao-360.herokuapp.com/api/insertAvaliacao", {
+
+            ano: anorecebido,
+            edicao: edicaorecebido,
+            referenciaidpessoa: referenciaidpessoarecebido,
+            referenciaidtipoavaliacao: referenciaidtipoavaliacaorecebido,
+            nota: notarecebido,
 
         }).then((response)=>{
             
