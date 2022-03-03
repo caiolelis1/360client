@@ -62,24 +62,6 @@ function Avaliacao(){
 
     }
 
-    const fazRequisicaoAvaliacao = () => {
-
-        Axios.post("https://avaliacao-360.herokuapp.com/api/insertAvaliacao", {
-
-            ano: anorecebido,
-            edicao: edicaorecebido,
-            referenciaidpessoa: referenciaidpessoarecebido,
-            referenciaidtipoavaliacao: referenciaidtipoavaliacaorecebido,
-            nota: notarecebido,
-
-        }).then((response)=>{
-            
-            alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
-            window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
-            //console.log(response);
-        })
-
-    }
 
     //função para enviar todas avaliações para a função de requisição, linha 179
     function enviaAvaliacoes(){
