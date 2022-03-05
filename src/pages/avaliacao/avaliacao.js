@@ -34,7 +34,8 @@ function Avaliacao(){
             userid: id,
         }).then((response) => {
             if(response.data[0].avaliou==1){
-                window.location.replace("https://youthful-euclid-69864e.netlify.app/avaliou")
+                alert("Você já avaliou, obrigado!");
+                window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
             }
             if(response.data[0].admin==1){
                 console.log("Este usuário é admin!")
@@ -71,7 +72,6 @@ function Avaliacao(){
             fazRequisicaoAvaliacao(dados.state.avaliacoes[i].ano,dados.state.avaliacoes[i].edicao,dados.state.avaliacoes[i].referenciaidpessoa,dados.state.avaliacoes[i].referenciaidtipoavaliacao,dados.state.avaliacoes[i].nota); //(linha 32)
 
         }
-
     }
 
     const [blocos, setBlocos] = useState([]);
