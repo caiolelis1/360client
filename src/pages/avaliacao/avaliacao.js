@@ -68,6 +68,7 @@ function Avaliacao(){
     //função para enviar todas avaliações para a função de requisição, linha 179
     function enviaAvaliacoes(){
         if(!buttonClicked){
+
             setButtonClicked(true)
 
             for(var i=0; i<dados.state.avaliacoes.length; i++){
@@ -75,6 +76,8 @@ function Avaliacao(){
                 fazRequisicaoAvaliacao(dados.state.avaliacoes[i].ano,dados.state.avaliacoes[i].edicao,dados.state.avaliacoes[i].referenciaidpessoa,dados.state.avaliacoes[i].referenciaidtipoavaliacao,dados.state.avaliacoes[i].nota); //(linha 32)
     
             }
+        } else {
+            console.log("Double click prevenido!!")
         }
 
     }
