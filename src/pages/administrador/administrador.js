@@ -38,11 +38,13 @@ function Administrador(){
 
         const resultaux = dados.state.avaliacoes.filter(item => item.referenciaidpessoa === id);
         const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
-
+        let resultLength = 0;
         let media = 0;
         for(let i in result) {
 
             if(result[i].nota){
+
+                resultLength++;
                 
                 result[i].nota = parseInt(result[i].nota, 10);
 
@@ -51,7 +53,7 @@ function Administrador(){
 
         }
 
-        media = media/result.length;
+        media = media/resultLength;
 
         return media;
 
