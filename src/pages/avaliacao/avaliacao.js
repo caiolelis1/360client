@@ -234,6 +234,7 @@ function Avaliacao(){
         <div>
         <Grid>
         <div className="pageAvaliacao">
+        <p></p>
         <img src="https://static.wixstatic.com/media/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.png/v1/fill/w_367,h_259,al_c,q_85,usm_0.66_1.00_0.01/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.webp"
                     width="100" height="70" />
 

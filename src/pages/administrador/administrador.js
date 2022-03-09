@@ -15,7 +15,12 @@ function Administrador(){
     const [blocos, setBlocos] = useState([]);
 
     const dados = useUnstated(DadosUnstated);
-
+    const btstilo2={margin:'10px 10px', width:230};
+    const Bootbot = styled(Button)({
+        backgroundColor: '#4ed840',
+        borderColor: '#4ed840',
+    });
+    const containerStyle={padding: 20, margin:"20px auto", maxWidth:1200};
 
     const buscarUser = (id) => {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
@@ -93,7 +98,7 @@ function Administrador(){
     //imprime o resultado das avaliações recebidas de todas pessoas
     function imprimeBlocos() {
         console.log("imprimindo blocos")
-
+        const paperStyle={padding: 20, height:'70vh', width:600, margin:"20px auto"}
         const aux = [];
         const subsistemas = dados.state.subsistemas;
         
@@ -108,6 +113,8 @@ function Administrador(){
             if (pessoasItem.referenciaidsubsistema === subsistemasItem.idsubsistema) { //confere se pessoa é de um certo subsistema
               children.push((
                 <div className="blocoPessoa">
+                <Grid>
+                <Paper elevation={10} style={paperStyle}>
 
                 <p className="tituloNomePessoa">
                   {pessoasItem.nomecompleto}
@@ -152,8 +159,10 @@ function Administrador(){
                     </p>
 
                 </form>
-
+                </Paper>
+                </Grid>
                 </div>
+                
               ));
             }
           }
@@ -180,19 +189,28 @@ function Administrador(){
 
     return<>{isAuthenticated() ?
         <div>
-            <div className="App">
-                <div className = "paineldecontrole">
+        <Grid>
+        <div className="pageAvaliacao">
+        <p></p>
+        <img src="https://static.wixstatic.com/media/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.png/v1/fill/w_367,h_259,al_c,q_85,usm_0.66_1.00_0.01/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.webp"
+                    width="100" height="70" />
 
-                <div>   
-                    <button onClick={() => selecionaSubsistemas()}>Ver avaliações</button>
-                </div>
-                
+                <h3>Avaliação 360 | Versão Web 0.1</h3>
+        <Container elevation={5} style={containerStyle}>
+            
+                <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Ver Resultados</Bootbot> 
+                <Typography> 
+                        <Link href='avaliacao'>
+                        Voltar Para a Avaliação.
+                        </Link>
+                    </Typography> 
                 <div>
                     {blocos}
                 </div>
-                
-                </div>
+
+            </Container>
             </div>
+            </Grid>
         </div>
         : <Redirect to="/login" />
     }</>
