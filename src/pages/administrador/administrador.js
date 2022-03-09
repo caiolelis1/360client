@@ -28,7 +28,7 @@ function Administrador(){
             userid: id,
         }).then((response) => {
             if(response.data[0].admin!=1){
-                window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
+                window.location.replace("http://teslaufmg.online")
             }
         })
     }

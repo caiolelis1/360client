@@ -36,7 +36,7 @@ function Avaliacao(){
         }).then((response) => {
             if(response.data[0].avaliou==1){
                 alert("Você já avaliou, obrigado!");
-                window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
+                window.location.replace("http://teslaufmg.online")
             }
             if(response.data[0].admin==1){
                 console.log("Este usuário é admin!")
@@ -58,7 +58,7 @@ function Avaliacao(){
         }).then((response)=>{
             
             alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
-            window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
+            window.location.replace("http://teslaufmg.online")
             //console.log(response);
         })
 
