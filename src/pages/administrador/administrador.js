@@ -2,7 +2,8 @@ import Axios from 'axios'
 import React, { useEffect, useState } from 'react';
 import { Redirect } from "react-router-dom";
 import { DadosUnstated } from '../avaliacao/dadosunstated.js';
-import {useUnstated } from '@gitbook/unstated';
+import { useUnstated } from '@gitbook/unstated';
+import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import { isAuthenticated, getTokenUser } from '../../services/auth';
 
 function Administrador(){
