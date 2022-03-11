@@ -54,6 +54,7 @@ function Avaliacao(){
             referenciaidpessoa: referenciaidpessoarecebido,
             referenciaidtipoavaliacao: referenciaidtipoavaliacaorecebido,
             nota: notarecebido,
+            userid: userId,
 
         }).then((response)=>{
             
