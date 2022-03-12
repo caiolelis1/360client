@@ -44,7 +44,7 @@ const Login = () => {
                     </Grid>
                     <TextField label="Nome de Usuário" placeholder="Insira o User" fullWidth required onChange={(e)=>{setUsuario(e.target.value)}}/>
                     <TextField label="Senha" placeholder="Insira a Senha" type='password' fullWidth required onChange={(e)=>{setSenha(e.target.value)}}/>
-                    <p>{loginStatus}</p>
+                    <p style={{color:"red"}}>{loginStatus}</p>
                     <Bootbot type="submit" variant='contained' onClick={() => login()} fullWidth style={btstilo}> Logar</Bootbot>
                     <Typography> Ainda não tem Cadastro?
                         <Link href='registro'>
