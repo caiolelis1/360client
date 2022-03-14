@@ -241,18 +241,15 @@ function Avaliacao(){
 
                 <h3>Avaliação 360 | Versão Web 0.1</h3>
         <Container elevation={5} style={containerStyle}>
-            
+
                 <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Começar a avaliação</Bootbot>
 
                 <div>
                     {blocos}
                 </div>
 
-                <Bootbot2 type="submit"  variant='contained' onClick={() => enviaAvaliacoes()} fullWidth style={btstilo}> Enviar a avaliação</Bootbot2>
-                
+                <Bootbot2 type="submit"  variant='contained' onClick={() => enviaAvaliacoes()} fullWidth style={btstilo}> Enviar a avaliação</Bootbot2>         
 
-
-            
             </Container>
             </div>
             </Grid>
