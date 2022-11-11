@@ -88,7 +88,8 @@ function Avaliacao() {
     function imprimeBlocos() {
 
         const paperStyle = { padding: 20, width: 600, margin: "50px auto" }
-        const blockStyle = { padding: 20, color: "white", backgroundColor: "white", margin: "50px auto" }
+        const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
+        const gridStyle = { padding: 5 }
         const aux = [];
 
         let children = [];
@@ -102,7 +103,7 @@ function Avaliacao() {
             if (pessoasItem.capitao === 1 || pessoasItem.diretorGeral === 1 || pessoasItem.diretor === 1) {
                 children.push((
                     <div className="blocoPessoa" style={blockStyle}>
-                        <Grid>
+                        <Grid style={gridStyle}>
                             <Paper elevation={10} style={paperStyle}>
                                 <p className="tituloNomePessoa">
                                     {pessoasItem.nomecompleto}
@@ -254,9 +255,8 @@ function Avaliacao() {
             }
             else {
                 children.push((
-                    <div className="blocoPessoa">
-
-                        <Grid>
+                    <div className="blocoPessoa" style={blockStyle}>
+                        <Grid style={gridStyle}>
                             <Paper elevation={10} style={paperStyle}>
                                 <p className="tituloNomePessoa">
                                     {pessoasItem.nomecompleto}
