@@ -95,6 +95,8 @@ function Avaliacao() {
         const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
         const gridStyle = { padding: 5 }
         const radioStyle = { padding: "2px 0 15px 0" }
+        const labelStyle = { color: "black", fontSize: 16 }
+        const pStyle = { color: "#191919", fontSize: 12 }
         const aux = [];
 
         let children = [];
@@ -118,7 +120,8 @@ function Avaliacao() {
                                         {pessoasItem.nomecompleto}
                                     </p>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
+                                        <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
@@ -131,7 +134,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
@@ -144,7 +147,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Proatividade / Criatividade</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
@@ -157,7 +160,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
@@ -170,7 +173,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
@@ -183,7 +186,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
+                                        <p style={pStyle}>(Se sentir integrado na equipe)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
@@ -195,7 +199,7 @@ function Avaliacao() {
                                         </RadioGroup>
                                     </FormControl>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
@@ -208,7 +212,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
+                                        <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
@@ -221,7 +226,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
+                                        <p style={pStyle}>(Elaboração e execução de projetos)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
@@ -234,7 +240,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
+                                        <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
@@ -267,7 +274,8 @@ function Avaliacao() {
                                         {pessoasItem.nomecompleto}
                                     </p>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
+                                        <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
@@ -280,7 +288,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
@@ -293,7 +301,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Proatividade / Criatividade</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
@@ -306,7 +314,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
@@ -319,7 +327,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
@@ -332,7 +340,7 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
@@ -345,7 +353,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Presença em Reuniões</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Presença</FormLabel>
+                                        <p style={pStyle}>(Presença nas reuniões e no CPH)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 2)} label="2" />
@@ -358,7 +367,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Participação em Reuniões</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Participação</FormLabel>
+                                        <p style={pStyle}>(Participação em reuniões e no desenvolvimento do projeto)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 2)} label="2" />
@@ -371,7 +381,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Cumprimento de Tarefas</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Cumprimento de Tarefas</FormLabel>
+                                        <p style={pStyle}>(Qualidade e pontualidade)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 2)} label="2" />
@@ -384,7 +395,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Comprometimento</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comprometimento</FormLabel>
+                                        <p style={pStyle}>(Abrir mão de certas coisas pelo tesla / Disponibilidade)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 2)} label="2" />
@@ -397,7 +409,8 @@ function Avaliacao() {
                                     </FormControl>
                                     <br></br>
                                     <FormControl>
-                                        <FormLabel id="demo-row-radio-buttons-group-label">Organização</FormLabel>
+                                        <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Organização</FormLabel>
+                                        <p style={pStyle}>(Organização relacionada à ambiente de trabalho e à horários)</p>
                                         <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                             <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 1)} label="1" />
                                             <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 2)} label="2" />
