@@ -95,8 +95,8 @@ function Avaliacao() {
         const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
         const gridStyle = { padding: 5 }
         const radioStyle = { padding: "2px 0 15px 0" }
-        const labelStyle = { color: "black", fontSize: 16 }
-        const pStyle = { color: "#191919", fontSize: 12 }
+        const labelStyle = { fontSize: 16 }
+        const pStyle = { color: "#191919", fontSize: 12, marginTop: 0, paddingTop: 0 }
         const aux = [];
 
         let children = [];
