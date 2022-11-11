@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Grid, styled, Paper, TextField, Button, Select, InputLabel, MenuItem, Typography, Link, Avatar } from "@material-ui/core"
-import TeslaLogo from './logo_tesla1.jpg'
+import TeslaLogo from './tesla-logo.png';
 const Registro = () => {
 
     const [subsistemas, setSubsistemas] = useState([]);
