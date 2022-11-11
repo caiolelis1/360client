@@ -88,6 +88,7 @@ function Avaliacao() {
     function imprimeBlocos() {
 
         const paperStyle = { padding: 20, width: 600, margin: "50px auto" }
+        const blockStyle = { padding: 20, color: "white", backgroundColor: "white", margin: "50px auto" }
         const aux = [];
 
         let children = [];
@@ -100,7 +101,7 @@ function Avaliacao() {
             //se for returna o seguinte HTML
             if (pessoasItem.capitao === 1 || pessoasItem.diretorGeral === 1 || pessoasItem.diretor === 1) {
                 children.push((
-                    <div className="blocoPessoa">
+                    <div className="blocoPessoa" style={blockStyle}>
                         <Grid>
                             <Paper elevation={10} style={paperStyle}>
                                 <p className="tituloNomePessoa">
