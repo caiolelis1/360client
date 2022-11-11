@@ -87,7 +87,7 @@ function Avaliacao() {
     //imprime o fomulário da avaliação de todas pessoas de todos subsistemas
     function imprimeBlocos() {
 
-        const paperStyle = { padding: 20, width: 600, margin: "20px 25px" }
+        const paperStyle = { padding: 20, width: 600, margin: "50px auto" }
         const aux = [];
 
         let children = [];
