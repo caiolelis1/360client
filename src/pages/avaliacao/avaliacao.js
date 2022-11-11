@@ -105,11 +105,9 @@ function Avaliacao() {
         for (let j = 0; j < pessoas.length; j++) { //loop para passar por todos pessoas
 
             const pessoasItem = pessoas[j];
-            if (pessoasItem.referenciaidsusbsistema === subsistemaId ||
+            if (pessoasItem.referenciaidsubsistema === subsistemaId ||
                 (pessoasItem.diretorGeral === 1 && pessoasItem.sistemaID === sistemaId) ||
                 pessoasItem.capitao === 1) {
-                    
-                    console.log(pessoasItem.referenciaidsusbsistema + (" ") + pessoasItem.nomecompleto)
                 //se for returna o seguinte HTML
                 if (pessoasItem.capitao === 1 || pessoasItem.diretorGeral === 1 || pessoasItem.diretor === 1) {
                     children.push((
