@@ -105,6 +105,7 @@ function Avaliacao() {
         for (let j = 0; j < pessoas.length; j++) { //loop para passar por todos pessoas
 
             const pessoasItem = pessoas[j];
+            console.log(subsistemaId)
             if (pessoasItem.referenciaidsusbsistema === subsistemaId ||
                 (pessoasItem.diretorGeral === 1 && pessoasItem.sistemaID === sistemaId) ||
                 pessoasItem.capitao === 1) {
