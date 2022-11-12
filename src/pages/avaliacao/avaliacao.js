@@ -110,6 +110,9 @@ function Avaliacao() {
             if (pessoasItem.referenciaidsubsistema === subsistemaId ||
                 (pessoasItem.diretorGeral === 1 && pessoasItem.sistemaID === sistemaId) ||
                 pessoasItem.capitao === 1) {
+                if (pessoasItem.idpessoa === userId){
+                    console.log("Achei a autoavaliação")
+                }
                 //se for returna o seguinte HTML
                 if (pessoasItem.capitao === 1 || pessoasItem.diretorGeral === 1 || pessoasItem.diretor === 1) {
                     children.push((
