@@ -76,7 +76,7 @@ const Registro = () => {
                             <MenuItem value='2'>Elétrica</MenuItem>
                             <MenuItem value='3'>Mecânica</MenuItem>
                         </Select>
-                    <InputLabel>Subsistema</InputLabel>
+                    <InputLabel style={{marginTop: "20px"}}>Subsistema</InputLabel>
                         <Select label="Subsistema" fullWidth required onChange={(e)=>{setSubsistema(e.target.value)}}>
                             <MenuItem active value={null}>Escolha seu subsistema</MenuItem>
                             {subsistemas.map((subsistema) =>(
