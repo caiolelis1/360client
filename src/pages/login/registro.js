@@ -87,10 +87,8 @@ const Registro = () => {
                     <TextField label="Nome Completo" placeholder="Insira seu Nome" fullWidth required onChange={(e)=>{setNome(e.target.value)}}/>
                     <TextField label="Senha" placeholder="Insira a Senha" type='password' fullWidth required onChange={(e)=>{setSenha(e.target.value)}}/>
                     <Bootbot type="submit" variant='contained' onClick={() => registrar()} fullWidth style={btstilo}> Cadastrar</Bootbot>
-                    <Typography> Já possui cadastro? 
-                        <Link href='login'>
-                            Voltar ao Login
-                        </Link>
+                    <Typography> 
+                        Já possui cadastro? <Link href='login'> Voltar ao Login</Link>
                     </Typography>
                 </Paper>
         </Grid>
