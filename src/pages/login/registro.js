@@ -84,7 +84,7 @@ const Registro = () => {
                             ))}
                         </Select>
                     <TextField label="Nome de Usuário" placeholder="Defina o User" fullWidth required onChange={(e)=>{setUsuario(e.target.value)}}/>
-                    <TextField label="Nome Completo" placeholder="Insira seu Nome" fullWidth required onChange={(e)=>{setNome(e.target.value)}}/>
+                    <TextField label="Nome" placeholder="Insira seu Nome" fullWidth required onChange={(e)=>{setNome(e.target.value)}}/>
                     <TextField label="Senha" placeholder="Insira a Senha" type='password' fullWidth required onChange={(e)=>{setSenha(e.target.value)}}/>
                     <Bootbot type="submit" variant='contained' onClick={() => registrar()} fullWidth style={btstilo}> Cadastrar</Bootbot>
                     <Typography> 
