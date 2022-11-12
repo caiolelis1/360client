@@ -56,8 +56,8 @@ const Registro = () => {
         buscarSubsistemas();
     },[])
 
-    const paperStyle={padding: 20, height:'70vh', width:280, margin:"20px auto"}
-    const btstilo={margin:'10px 0'}
+    const paperStyle={padding: 20, height:'75vh', width:280, margin:"20px auto"}
+    const btstilo={margin:'10px 0', marginBottom: '20px'}
     const Bootbot = styled(Button)({
         backgroundColor: '#4ed840',
         borderColor: '#4ed840',
