@@ -25,11 +25,11 @@ const Registro = () => {
             console.log(response);
 
             if(response.data!==''){
-                alert("SUA CONTA FOI CRIADA COM SUCESSO, "+nome+"! JÁ PODE AVALIAR.")
+                alert("Sua conta foi criada com sucesso, "+nome+"!")
                 window.location.href = 'login';
             }
             else{
-                alert("POR FAVOR INSIRA OS DADOS CORRETAMENTE")
+                alert("Por favor insira os dados corretamente")
             }
 
             /*if(response.data.message){
@@ -69,7 +69,7 @@ const Registro = () => {
                     <Avatar alt='rcc' src={TeslaLogo}/>
                         <h2>Cadastro</h2>
                     </Grid>
-                    <InputLabel>Sistemas</InputLabel>
+                    <InputLabel>Sistema</InputLabel>
                         <Select label="Sistema" fullWidth required onChange={(e)=>{setSistema(e.target.value)}}>
                             <MenuItem active value={null}>Escolha seu sistema</MenuItem>
                             <MenuItem value='1'>Administração</MenuItem>
@@ -87,7 +87,7 @@ const Registro = () => {
                     <TextField label="Nome Completo" placeholder="Insira seu Nome" fullWidth required onChange={(e)=>{setNome(e.target.value)}}/>
                     <TextField label="Senha" placeholder="Insira a Senha" type='password' fullWidth required onChange={(e)=>{setSenha(e.target.value)}}/>
                     <Bootbot type="submit" variant='contained' onClick={() => registrar()} fullWidth style={btstilo}> Cadastrar</Bootbot>
-                    <Typography> Já possui cadastro?
+                    <Typography> Já possui cadastro? 
                         <Link href='login'>
                             Voltar ao Login
                         </Link>
