@@ -285,7 +285,7 @@ function Avaliacao() {
 
                                         <br></br>
                                         <p className="tituloTipoAvaliacao">Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?</p>
-                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 13, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
+                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 134, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
 
 
                                     </Paper>
@@ -472,7 +472,7 @@ function Avaliacao() {
 
                                         <br></br>
                                         <p className="tituloTipoAvaliacao">Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?</p>
-                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 13, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
+                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 134, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
 
 
                                     </Paper>
