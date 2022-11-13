@@ -82,7 +82,7 @@ function Avaliacao() {
         let posicao = {
             referenciaidpessoa: recebidoidpessoa,
             ano: format(data, 'Y'),
-            edicao: 1,
+            edicao: 2,
             referenciaidtipoavaliacao: recebidoidtipoavaliacao,
             nota: recebidonota,
         };
