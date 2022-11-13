@@ -17,6 +17,7 @@ function Avaliacao() {
     const [sistemaId, setSistemaId] = useState([]);
     const [pessoas, setPessoas] = useState([]);
     const [userId, setUserId] = useState();
+    const [naoAnonimo, setNaoAnonimo] = useState();
     const [data] = useState(new Date());
 
     const containerStyle = { padding: 20, margin: "20px auto", maxWidth: 1200 };
@@ -41,6 +42,10 @@ function Avaliacao() {
             setSistemaId(response.data[0].sistemaID);
             setDiretor(response.data[0].diretor);
 
+            if(response.data[0].diretor===1||response.data[0].diretorGeral===1||response.data[0].capitao===1){
+                setNaoAnonimo(1);
+            }
+
             if (response.data[0].avaliou === 1) {
                 alert("Você já avaliou, obrigado!");
                 window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
@@ -58,6 +63,8 @@ function Avaliacao() {
             referenciaidtipoavaliacao: referenciaidtipoavaliacaorecebido,
             nota: notarecebido,
             userid: userId,
+            naoAnonimo: naoAnonimo,
+
         }).then((response) => {
             alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
             window.location.replace("http://teslaufmg.online")
