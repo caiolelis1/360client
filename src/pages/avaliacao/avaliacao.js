@@ -115,12 +115,6 @@ function Avaliacao() {
         let children = [];
         const pessoas = dados.state.pessoas;
 
-        children.push((<p>BEM VINDOS A PRIMEIRA AVALIAÇÃO 360° COM O RH
-
-            Esse é um projeto que o RH e a equipe Tesla tão botando muita fé pra ser algo efetivo e que consiga promover uma cultura de feedback frequente, a possibilidade de desenvolvimento dos membros, além de meios mais eficazes para a resolução de conflitos. 
-            
-            Pedimos o máximo de sinceridade possível é, que comecem os jogos!!</p>));
-
         for (let j = 0; j < pessoas.length; j++) { //loop para passar por todos pessoas
 
             const pessoasItem = pessoas[j];
