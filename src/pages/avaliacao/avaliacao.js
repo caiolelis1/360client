@@ -71,7 +71,7 @@ function Avaliacao() {
 
         }).then((response) => {
             alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
-            window.location.replace("http://teslaufmg.online")
+            window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
         })
 
     }
