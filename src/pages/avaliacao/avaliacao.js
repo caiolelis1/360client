@@ -978,12 +978,12 @@ function Avaliacao() {
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Quer ir num date comigo sábado?</FormLabel>
                                                     <p style={pStyle}>(19:00 - lugar a decidir)</p>
                                                     <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} label="Sim, quero ser feliz" />
-                                                        <FormControlLabel value="op2" control={<Radio />} label="Não, prefiro ser triste" />
+                                                        <FormControlLabel value="op1" control={<Radio />} label="Sim, quero ter uma noite divertida" />
+                                                        <FormControlLabel value="op2" control={<Radio />} label="Não, prefiro ter uma noite sem graça" />
                                                     </RadioGroup>
                                                 </FormControl>
                                                 <p style={pStyle}> PS.: Isso obviamente apareceu especialmente pra vc</p>
-                                                <p style={pStyle}> PS2.: Me responde a pergunta no wpp pls (o Dudu me demite se eu zoar a avaliação 360)</p>
+                                                <p style={pStyle}> PS2.: Me responde a pergunta no wpp por favor (o Dudu me demite se eu zoar [mais] a avaliação 360)</p>
                                                 <FormControl>
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
                                                     <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
