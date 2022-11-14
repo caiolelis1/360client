@@ -978,8 +978,8 @@ function Avaliacao() {
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Quer ir num date comigo sábado?</FormLabel>
                                                     <p style={pStyle}>(19:00 - lugar a decidir)</p>
                                                     <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} label="Sim" />
-                                                        <FormControlLabel value="op2" control={<Radio />} label="Não" />
+                                                        <FormControlLabel value="op1" control={<Radio />} label="Sim, quero ser feliz" />
+                                                        <FormControlLabel value="op2" control={<Radio />} label="Não, prefiro ser triste" />
                                                     </RadioGroup>
                                                 </FormControl>
                                                 <p style={pStyle}> PS.: Isso obviamente apareceu especialmente pra vc</p>
