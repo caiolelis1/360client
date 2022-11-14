@@ -975,6 +975,14 @@ function Avaliacao() {
                                                     </RadioGroup>
                                                 </FormControl>
                                                 <FormControl>
+                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Quer ir num date comigo sábado?</FormLabel>
+                                                    <p style={pStyle}>(19:00 - lugar a decidir)</p>
+                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
+                                                        <FormControlLabel value="op1" control={<Radio />} label="Sim, quero ser feliz" />
+                                                        <FormControlLabel value="op2" control={<Radio />} label="Não, prefiro ser triste" />
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                <FormControl>
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
                                                     <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
                                                     <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
