@@ -946,8 +946,34 @@ function Avaliacao() {
                                         <Grid style={gridStyle}>
                                             <Paper elevation={10} style={paperStyle}>
                                                 <p className="tituloNomePessoa">
-                                                    {pessoasItem.nomecompleto} - AUTOAVALIAÇÃO do mais lindo
+                                                    {pessoasItem.nomecompleto} - AUTOAVALIAÇÃO
                                                 </p>
+                                                <FormControl>
+                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Linda</FormLabel>
+                                                    <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
+                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
+                                                        <FormControlLabel value="op1" control={<Radio />} label="1" />
+                                                        <FormControlLabel value="op2" control={<Radio />} label="2" />
+                                                        <FormControlLabel value="op3" control={<Radio />} label="3" />
+                                                        <FormControlLabel value="op4" control={<Radio />} label="4" />
+                                                        <FormControlLabel value="op5" control={<Radio />} label="5" />
+                                                        <FormControlLabel value="op6" control={<Radio />} label="6" />
+                                                        <FormControlLabel value="op7" control={<Radio />} label="7" />
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dá mole pra mim</FormLabel>
+                                                    <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
+                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
+                                                        <FormControlLabel value="op1" control={<Radio />} label="1" />
+                                                        <FormControlLabel value="op2" control={<Radio />} label="2" />
+                                                        <FormControlLabel value="op3" control={<Radio />} label="3" />
+                                                        <FormControlLabel value="op4" control={<Radio />} label="4" />
+                                                        <FormControlLabel value="op5" control={<Radio />} label="5" />
+                                                        <FormControlLabel value="op6" control={<Radio />} label="6" />
+                                                        <FormControlLabel value="op7" control={<Radio />} label="7" />
+                                                    </RadioGroup>
+                                                </FormControl>
                                                 <FormControl>
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
                                                     <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
