@@ -1449,6 +1449,7 @@ function Avaliacao() {
                             }
     
                         }
+                    }
 
 
             } else{ //membro comum PRONTO
