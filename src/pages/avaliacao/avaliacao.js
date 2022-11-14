@@ -2229,13 +2229,13 @@ function Avaliacao() {
                     <Container elevation={5} style={containerStyle}>
                         <Card variant="outlined">
                             <CardContent>
-                                <Typography variant="h4">
+                                <Typography variant="h5">
                                       BEM VINDOS A PRIMEIRA AVALIAÇÃO 360° COM O RH
                                 </Typography>
                                 <Typography>
                                 Esse é um projeto que o RH e a equipe Tesla tão botando muita fé pra ser algo efetivo e que consiga promover uma cultura de feedback frequente, a possibilidade de desenvolvimento dos membros, além de meios mais eficazes para a resolução de conflitos.
                                 </Typography>
-                                <Typography variant="h4">
+                                <Typography variant="h5">
                                      Pedimos o máximo de sinceridade possível e, que comecem os jogos!!
                                 </Typography>
                             </CardContent>
