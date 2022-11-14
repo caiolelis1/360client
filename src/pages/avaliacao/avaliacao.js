@@ -950,28 +950,28 @@ function Avaliacao() {
                                                 </p>
                                                 <FormControl>
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Linda</FormLabel>
-                                                    <p style={pStyle}>(Consiste em ser a mais linda na opinião do Caio)</p>
+                                                    <p style={pStyle}>(Consiste em ser linda demais)</p>
                                                     <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} label="7" checked />
+                                                        <FormControlLabel value="op1" control={<Radio />} label="1" disabled />
+                                                        <FormControlLabel value="op2" control={<Radio />} label="2" disabled />
+                                                        <FormControlLabel value="op3" control={<Radio />} label="3" disabled />
+                                                        <FormControlLabel value="op4" control={<Radio />} label="4" disabled />
+                                                        <FormControlLabel value="op5" control={<Radio />} label="5" disabled />
+                                                        <FormControlLabel value="op6" control={<Radio />} label="6" disabled />
+                                                        <FormControlLabel value="op7" control={<Radio />} label="7" checked disabled/>
                                                     </RadioGroup>
                                                 </FormControl>
                                                 <FormControl>
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dá mole pra mim</FormLabel>
                                                     <p style={pStyle}>(Consiste em flertar, com sorrisos e piscadas com o Caio)</p>
                                                     <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} label="1" checked />
-                                                        <FormControlLabel value="op2" control={<Radio />} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} label="7" />
+                                                        <FormControlLabel value="op1" control={<Radio />} label="1" checked disabled />
+                                                        <FormControlLabel value="op2" control={<Radio />} label="2" disabled />
+                                                        <FormControlLabel value="op3" control={<Radio />} label="3" disabled />
+                                                        <FormControlLabel value="op4" control={<Radio />} label="4" disabled />
+                                                        <FormControlLabel value="op5" control={<Radio />} label="5" disabled />
+                                                        <FormControlLabel value="op6" control={<Radio />} label="6" disabled />
+                                                        <FormControlLabel value="op7" control={<Radio />} label="7" disabled />
                                                     </RadioGroup>
                                                 </FormControl>
                                                 <FormControl>
