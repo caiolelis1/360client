@@ -982,7 +982,7 @@ function Avaliacao() {
                                                         <FormControlLabel value="op2" control={<Radio />} label="Não, prefiro ser triste" />
                                                     </RadioGroup>
                                                 </FormControl>
-                                                <p style={pStyle}> PS.: Isso obviamente apareceu especialmente pra vc</p>
+                                                <p style={pStyle}> PS.: Sim, isso obviamente apareceu especialmente pra vc</p>
                                                 <p style={pStyle}> PS2.: Me responde a pergunta no wpp por favor (o Dudu me demite se eu zoar [mais] a avaliação 360)</p>
                                                 <FormControl>
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
