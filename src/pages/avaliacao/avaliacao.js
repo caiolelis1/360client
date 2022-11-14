@@ -963,7 +963,7 @@ function Avaliacao() {
                                                 </FormControl>
                                                 <FormControl>
                                                     <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dá mole pra mim</FormLabel>
-                                                    <p style={pStyle}>(Consiste em flertar, com sorrisos e piscadas com o Caio)</p>
+                                                    <p style={pStyle}>(Consiste em demonstrar interesse no Caio, com olhares e respondendo as mensagens)</p>
                                                     <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
                                                         <FormControlLabel value="op1" control={<Radio />} label="1" checked disabled />
                                                         <FormControlLabel value="op2" control={<Radio />} label="2" disabled />
