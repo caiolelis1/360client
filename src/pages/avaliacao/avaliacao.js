@@ -4,7 +4,7 @@ import Axios from 'axios'
 import { DadosUnstated } from './dadosunstated.js';
 import { useUnstated } from '@gitbook/unstated';
 import { isAuthenticated, getTokenUser } from '../../services/auth';
-import { Grid, styled, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Paper, Button, Container } from "@material-ui/core"
+import { Grid, styled, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Paper, Button, Container, Card, Typography, CardContent } from "@material-ui/core"
 import { format } from "date-fns";
 import './styles.css';
 
@@ -2227,9 +2227,20 @@ function Avaliacao() {
                         width="100" height="70" alt="Logo Tesla" />
                     <h3>Avaliação 360 | Versão Web 0.2</h3>
                     <Container elevation={5} style={containerStyle}>
-                        <h4>BEM VINDOS A PRIMEIRA AVALIAÇÃO 360° COM O RH</h4>
-                        <p>Esse é um projeto que o RH e a equipe Tesla tão botando muita fé pra ser algo efetivo e que consiga promover uma cultura de feedback frequente, a possibilidade de desenvolvimento dos membros, além de meios mais eficazes para a resolução de conflitos. </p>
-                        <h4>Pedimos o máximo de sinceridade possível e, que comecem os jogos!!</h4>
+                        <Card>
+                            <CardContent>
+                                <Typography>
+                                      BEM VINDOS A PRIMEIRA AVALIAÇÃO 360° COM O RH
+                                </Typography>
+                                <Typography>
+                                Esse é um projeto que o RH e a equipe Tesla tão botando muita fé pra ser algo efetivo e que consiga promover uma cultura de feedback frequente, a possibilidade de desenvolvimento dos membros, além de meios mais eficazes para a resolução de conflitos.
+                                </Typography>
+                                <Typography>
+                                     Pedimos o máximo de sinceridade possível e, que comecem os jogos!!
+                                </Typography>
+                            </CardContent>
+                           
+                        </Card>
                         <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Começar a avaliação</Bootbot>
                         <div>{blocos}</div>
                         <Bootbot2 type="submit" variant='contained' onClick={() => enviaAvaliacoes()} fullWidth style={btstilo}> Enviar a avaliação</Bootbot2>
