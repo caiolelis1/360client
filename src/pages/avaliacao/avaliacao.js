@@ -940,7 +940,7 @@ function Avaliacao() {
                     (pessoasItem.diretorGeral === 1 && pessoasItem.sistemaID === sistemaId) ||
                     pessoasItem.capitao === 1){
                         if(pessoasItem.idpessoa === userId){
-                            if(pessoasItem.idpessoa === 314){
+                            if(pessoasItem.idpessoa === 1264){
                                 children.push((
                                     <div className="blocoPessoa" style={blockStyle}>
                                         <Grid style={gridStyle}>
