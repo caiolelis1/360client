@@ -2227,9 +2227,9 @@ function Avaliacao() {
                         width="100" height="70" alt="Logo Tesla" />
                     <h3>Avaliação 360 | Versão Web 0.2</h3>
                     <Container elevation={5} style={containerStyle}>
-                        <h3>BEM VINDOS A PRIMEIRA AVALIAÇÃO 360° COM O RH</h3>
+                        <h4>BEM VINDOS A PRIMEIRA AVALIAÇÃO 360° COM O RH</h4>
                         <p>Esse é um projeto que o RH e a equipe Tesla tão botando muita fé pra ser algo efetivo e que consiga promover uma cultura de feedback frequente, a possibilidade de desenvolvimento dos membros, além de meios mais eficazes para a resolução de conflitos. </p>
-                        <h3>Pedimos o máximo de sinceridade possível e, que comecem os jogos!!</h3>
+                        <h4>Pedimos o máximo de sinceridade possível e, que comecem os jogos!!</h4>
                         <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Começar a avaliação</Bootbot>
                         <div>{blocos}</div>
                         <Bootbot2 type="submit" variant='contained' onClick={() => enviaAvaliacoes()} fullWidth style={btstilo}> Enviar a avaliação</Bootbot2>
