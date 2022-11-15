@@ -1291,7 +1291,7 @@ function Avaliacao() {
                             }
 
                         } else{
-                            if(pessoas.diretorGeral===1){
+                            if(pessoasItem.diretorGeral===1||pessoasItem.capitao===1){
                                 children.push((
                                     <div className="blocoPessoa" style={blockStyle}>
                                         <Grid style={gridStyle}>
@@ -1803,7 +1803,7 @@ function Avaliacao() {
                                                 <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 7)} label="7" />
                                             </RadioGroup>
                                         </FormControl>
-                                        
+
                                         <br></br>
                                         <p className="tituloTipoAvaliacao">Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?</p>
                                         <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 134, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
