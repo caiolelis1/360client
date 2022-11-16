@@ -21,7 +21,7 @@ function App(){
         <Route exact path="/" component= {Login}/>
         <Route exact path="/administrador" component= {Administrador}/>
         <Route exact path="/login" component= {Login}/>
-        <Route exact path="/avaliacao" component= {NotReady}/>
+        <Route exact path="/avaliacao" component= {Avaliacao}/>
         <Route exact path="/registro" component= {Registro}/>
         <Route exact path="/membro/:id" component= {Membro}/>
         <Route exact path="/sistema" component={Sistema}/>
