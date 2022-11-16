@@ -23,7 +23,7 @@ function App(){
         <Route exact path="/login" component= {Login}/>
         <Route exact path="/avaliacao" component= {NotReady}/>
         <Route exact path="/registro" component= {Registro}/>
-        <Route exact path="/membro" component= {Membro}/>
+        <Route exact path="/membro/:id" component= {Membro}/>
         <Route exact path="/sistema" component={Sistema}/>
         <Route exact path="/subsistema" component={Subsistema} />
       </Switch>
