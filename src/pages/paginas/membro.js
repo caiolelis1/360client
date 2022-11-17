@@ -5,25 +5,37 @@ import { useParams } from "react-router-dom";
 function Membro (){
 
     const [user, setUser] = useState();
+    const [notas, setNotas] = useState();
     const params = useParams();
     let id = params.id;
 
 
-    const buscarUser = (id) => {
+    const buscarUser = (id) => {      //buscar usuario no db
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
             setUser(response.data[0]);
+            console.log('user: ' + user.nomecompleto);
+            buscarNotas(id)
         })
 
     }
 
-    useEffect(()=>{
-        buscarUser(id)
-    },[])
-    //buscar usuario no db
+    const buscarNotas = (id) => {     //buscar notas no db
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
+            id:id,
+        }).then((response) => {
+            setNotas(response.data);
+            console.log(response.data)
+        })
+    }
 
-    //buscar notas no db
+    useEffect(()=>{
+        buscarUser(id);
+    },[])
+
+
+
 
     //fazer media
     //mostrar cada nota separadamente
@@ -32,7 +44,6 @@ function Membro (){
     return(
         <div>
             <div>Membro {params.id}</div>
-            <div>{user.nomecompleto}</div>
         </div>
         
     )
