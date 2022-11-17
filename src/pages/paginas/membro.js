@@ -35,6 +35,7 @@ function Membro (){
     const buscarTipos = () =>{
         Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaTipos',{}
         ).then((response) => {
+            console.log(response.data)
             setTipos(response.data);
             console.log(tipos)
         })
