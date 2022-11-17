@@ -11,7 +11,7 @@ function Membro (){
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
-            console.log(response.data[0])
+            console.log(response)
         })
 
     }
