@@ -9,7 +9,7 @@ function Membro (){
 
     const buscarUser = (id) => {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
-            id: id,
+            userid: id,
         }).then((response) => {
             console.log(response.data[0])
         })
