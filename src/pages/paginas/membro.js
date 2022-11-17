@@ -6,6 +6,8 @@ function Membro (){
 
     const [user, setUser] = useState({});
     const [notas, setNotas] = useState([]);
+    const [tipos, setTipos] = useState([]);
+
     const params = useParams();
     let id = params.id;
 
@@ -30,8 +32,17 @@ function Membro (){
         })
     }
 
+    const buscarTipos = () =>{
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaTipos',{}
+        ).then((response) => {
+            setTipos(response.data);
+            console.log(tipos)
+        })
+    }
+
     useEffect(()=>{
         buscarUser(id);
+        buscarTipos();
     },[])
     //buscar usuario no db
 
@@ -43,7 +54,7 @@ function Membro (){
 
     return(
         <div>
-            <div>Membro {params.id}</div>
+
             <h3>{user.nomecompleto}</h3>
             {notas.map( (nota) => <h1>{nota.nota}</h1>)}        
         </div>
