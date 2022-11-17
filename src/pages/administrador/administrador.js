@@ -46,7 +46,7 @@ function Administrador(){
 
                 resultLength++;
                 
-                result[i].nota = parseInt(result[i].nota, 10);
+                result[i].nota = parseInt(result[i].nota, 2);
 
                 media += result[i].nota;
             }
