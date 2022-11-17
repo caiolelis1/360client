@@ -1,2014 +1,306 @@
-import { Redirect } from "react-router-dom";
-import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
-import { DadosUnstated } from './dadosunstated.js';
+import React, { useEffect, useState } from 'react';
+import { Redirect } from "react-router-dom";
+import { DadosUnstated } from '../avaliacao/dadosunstated.js';
 import { useUnstated } from '@gitbook/unstated';
+import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import { isAuthenticated, getTokenUser } from '../../services/auth';
-import { Grid, styled, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Paper, Button, Container, Card, Typography, CardContent } from "@material-ui/core"
-import { format } from "date-fns";
-import './styles.css';
 
-function Avaliacao() {
+function Administrador(){
 
-    const [buttonClicked, setButtonClicked] = useState(false);
-    const [subsistemas, setSubsistemas] = useState([]);
-    const [diretor, setDiretor] = useState();
-    const [diretorGeral, setDiretorGeral] = useState();
-    const [capitao, setCapitao] = useState();
-    const [subsistemaId, setSubsistemaId] = useState([]);
-    const [sistemaId, setSistemaId] = useState([]);
-    const [pessoas, setPessoas] = useState([]);
     const [userId, setUserId] = useState();
-    const [naoAnonimo, setNaoAnonimo] = useState();
-    const [data] = useState(new Date());
+    const [subsistemas, setSubsistemas] = useState([]);
+    const [pessoas, setPessoas] = useState([]);
+    const [avaliacoes, setAvaliacoes] = useState([]);
 
-    const containerStyle = { padding: 20, margin: "20px auto", maxWidth: 1200 };
-    const btstilo = { margin: '10px 10px', width: 200 };
-    const btstilo2 = { margin: '10px 10px', width: 230 };
+    const [blocos, setBlocos] = useState([]);
+
     const dados = useUnstated(DadosUnstated);
+    const btstilo2={margin:'10px 10px', width:230};
     const Bootbot = styled(Button)({
         backgroundColor: '#4ed840',
         borderColor: '#4ed840',
-    })
-    const Bootbot2 = styled(Button)({
-        backgroundColor: '#999999',
-        borderColor: '#999999',
-    })
-
+    });
+    const containerStyle={padding: 20, margin:"20px auto", maxWidth:1200};
 
     const buscarUser = (id) => {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
-            setSubsistemaId(response.data[0].referenciaidsubsistema);
-            setSistemaId(response.data[0].sistemaID);
-            setDiretor(response.data[0].diretor);
-            setDiretorGeral(response.data[0].diretorGeral);
-            setCapitao(response.data[0].capitao)
-
-            if(response.data[0].diretor===1||response.data[0].diretorGeral===1||response.data[0].capitao===1){
-                setNaoAnonimo(1);
+            if(response.data[0].admin!=1){
+                window.location.replace("http://teslaufmg.online")
             }
-
-            if (response.data[0].avaliou === 1) {
-                alert("Você já avaliou, obrigado!");
-                window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
-            }
-
         })
     }
 
-    //função para enviar avaliação para o banco de dados, linha 52
-    const fazRequisicaoAvaliacao = (anorecebido, edicaorecebido, referenciaidpessoarecebido, referenciaidtipoavaliacaorecebido, notarecebido) => {
-        Axios.post("https://avaliacao-360.herokuapp.com/api/insertAvaliacao", {
-            ano: anorecebido,
-            edicao: edicaorecebido,
-            referenciaidpessoa: referenciaidpessoarecebido,
-            referenciaidtipoavaliacao: referenciaidtipoavaliacaorecebido,
-            nota: notarecebido,
-            userid: userId,
-            naoAnonimo: naoAnonimo,
+    //faz a media de um tipo das avaliações de uma pessoa
+    function media(id,tipo){
 
-        }).then((response) => {
-            alert("Obrigado pela sua contribuição, suas respostas foram enviadas");
-            window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
-        })
+        const resultaux = dados.state.avaliacoes.filter(item => item.referenciaidpessoa === id);
+        const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
+        let resultLength = 0;
+        let media = 0;
+        for(let i in result) {
 
-    }
+            if(result[i].nota){
 
-    //função para enviar todas avaliações para a função de requisição, linha 179
-    function enviaAvaliacoes() {
-        if (!buttonClicked) {
-            setButtonClicked(true)
-            for (var i = 0; i < dados.state.avaliacoes.length; i++) {
-                fazRequisicaoAvaliacao(dados.state.avaliacoes[i].ano, dados.state.avaliacoes[i].edicao, dados.state.avaliacoes[i].referenciaidpessoa, dados.state.avaliacoes[i].referenciaidtipoavaliacao, dados.state.avaliacoes[i].nota); //(linha 32)
+                resultLength++;
+                
+                result[i].nota = parseInt(result[i].nota, 10);
+
+                media += result[i].nota;
             }
-        }
-    }
 
-    const [blocos, setBlocos] = useState([]);
-
-    //função que atualiza o state (objeto) avaliação 
-    function atualizaStateAvaliacao(recebidoidpessoa, recebidoidtipoavaliacao, recebidonota) {
-        let posicao = {
-            referenciaidpessoa: recebidoidpessoa,
-            ano: format(data, 'Y'),
-            edicao: 2,
-            referenciaidtipoavaliacao: recebidoidtipoavaliacao,
-            nota: recebidonota,
-        };
-
-        dados.pushAvaliacao(posicao);
-    }
-
-    //imprime o fomulário da avaliação de todas pessoas de todos subsistemas
-    function imprimeBlocos() {
-
-        const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
-        const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
-        const gridStyle = { padding: 5 }
-        const radioStyle = { padding: "2px 0 15px 0" }
-        const labelStyle = { fontSize: 16 }
-        const pStyle = { color: "#191919", fontSize: 12, marginTop: 0, paddingTop: 0 }
-        const aux = [];
-
-        let children = [];
-        const pessoas = dados.state.pessoas;
-
-        for (let j = 0; j < pessoas.length; j++) { //loop para passar por todos pessoas
-
-            const pessoasItem = pessoas[j];
-
-            if(capitao===1){
-                if(pessoasItem.diretorGeral === 1 || pessoasItem.capitao === 1){
-                    if(pessoasItem.idpessoa === userId){
-                        children.push((
-                            <div className="blocoPessoa" style={blockStyle}>
-                                <Grid style={gridStyle}>
-                                    <Paper elevation={10} style={paperStyle}>
-                                        <p className="tituloNomePessoa">
-                                            {pessoasItem.nomecompleto} - AUTOAVALIAÇÃO
-                                        </p>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                            <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                            <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Uso da SUATI</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                            <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                            <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                            <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-
-                                        <br></br>
-                                        <p className="tituloTipoAvaliacao">Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?</p>
-                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 134, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-
-
-                                    </Paper>
-                                </Grid>
-                            </div>
-                        ));
-                    } else{
-                        children.push((
-                            <div className="blocoPessoa" style={blockStyle}>
-                                <Grid style={gridStyle}>
-                                    <Paper elevation={10} style={paperStyle}>
-                                        <p className="tituloNomePessoa">
-                                            {pessoasItem.nomecompleto}
-                                        </p>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                            <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                            <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                            <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                            <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                            <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <p className="tituloTipoAvaliacao">no que você acha que seu colega mandou bem nesse último mês?</p>
-                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 114, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-
-                                        <br></br>
-                                        <p className="tituloTipoAvaliacao">qual ponto você acha que seu colega pode melhorar / desenvolver?</p>
-                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 124, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-
-                                    </Paper>
-                                </Grid>
-                            </div>
-                        ));
-                    }
-                }
-
-            } else if(diretorGeral===1){
-                if(pessoasItem.capitao === 1 || (pessoasItem.diretor===1&&pessoasItem.sistemaID===sistemaId) || pessoasItem.idpessoa===userId){
-                    if(pessoasItem.idpessoa === userId){
-                        children.push((
-                            <div className="blocoPessoa" style={blockStyle}>
-                                <Grid style={gridStyle}>
-                                    <Paper elevation={10} style={paperStyle}>
-                                        <p className="tituloNomePessoa">
-                                            {pessoasItem.nomecompleto} - AUTOAVALIAÇÃO
-                                        </p>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                            <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                            <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Uso da SUATI</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                            <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                            <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                            <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-
-                                        <br></br>
-                                        <p className="tituloTipoAvaliacao">Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?</p>
-                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 134, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-
-
-                                    </Paper>
-                                </Grid>
-                            </div>
-                        ));
-                    } else{
-                        if(pessoasItem.capitao === 1){
-                            children.push((
-                                <div className="blocoPessoa" style={blockStyle}>
-                                    <Grid style={gridStyle}>
-                                        <Paper elevation={10} style={paperStyle}>
-                                            <p className="tituloNomePessoa">
-                                                {pessoasItem.nomecompleto}
-                                            </p>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                                <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                                <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                                <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                                <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                                <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">no que você acha que seu colega mandou bem nesse último mês?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 114, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">qual ponto você acha que seu colega pode melhorar / desenvolver?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 124, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                        </Paper>
-                                    </Grid>
-                                </div>
-                            ));
-                        } else{
-                            children.push((
-                                <div className="blocoPessoa" style={blockStyle}>
-                                    <Grid style={gridStyle}>
-                                        <Paper elevation={10} style={paperStyle}>
-                                            <p className="tituloNomePessoa">
-                                                {pessoasItem.nomecompleto}
-                                            </p>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                                <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                                <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                                <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                                <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                                <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">no que você acha que seu colega mandou bem nesse último mês?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 114, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">qual ponto você acha que seu colega pode melhorar / desenvolver?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 124, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                        </Paper>
-                                    </Grid>
-                                </div>
-                            ));
-                        }
-
-                    }
-                }
-
-            } else if(diretor===1){ // diretor PRONTO
-                if(pessoasItem.referenciaidsubsistema === subsistemaId ||
-                    (pessoasItem.diretorGeral === 1 && pessoasItem.sistemaID === sistemaId) ||
-                    pessoasItem.capitao === 1){
-                        if(pessoasItem.idpessoa === userId){
-                                children.push((
-                                    <div className="blocoPessoa" style={blockStyle}>
-                                        <Grid style={gridStyle}>
-                                            <Paper elevation={10} style={paperStyle}>
-                                                <p className="tituloNomePessoa">
-                                                    {pessoasItem.nomecompleto} - AUTOAVALIAÇÃO
-                                                </p>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                                    <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                                    <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Uso da SUATI</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                                    <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                                    <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                                    <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-
-                                                <br></br>
-                                                <p className="tituloTipoAvaliacao">Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?</p>
-                                                <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 134, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-        
-        
-                                            </Paper>
-                                        </Grid>
-                                    </div>
-                                ));
-
-                        } else{
-                            if(pessoasItem.diretorGeral===1||pessoasItem.capitao===1){
-                                children.push((
-                                    <div className="blocoPessoa" style={blockStyle}>
-                                        <Grid style={gridStyle}>
-                                            <Paper elevation={10} style={paperStyle}>
-                                                <p className="tituloNomePessoa">
-                                                    {pessoasItem.nomecompleto}
-                                                </p>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                                    <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                                    <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                                    <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                                    <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                                    <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <p className="tituloTipoAvaliacao">no que você acha que seu colega mandou bem nesse último mês?</p>
-                                                <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 114, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-        
-                                                <br></br>
-                                                <p className="tituloTipoAvaliacao">qual ponto você acha que seu colega pode melhorar / desenvolver?</p>
-                                                <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 124, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-        
-                                            </Paper>
-                                        </Grid>
-                                    </div>
-                                ));
-                            } else{
-                                children.push((
-                                    <div className="blocoPessoa" style={blockStyle}>
-                                        <Grid style={gridStyle}>
-                                            <Paper elevation={10} style={paperStyle}>
-                                                <p className="tituloNomePessoa">
-                                                    {pessoasItem.nomecompleto}
-                                                </p>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                                    <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Uso da SUATI</FormLabel>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Presença</FormLabel>
-                                                    <p style={pStyle}>(Presença nas reuniões e no CPH)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Participação</FormLabel>
-                                                    <p style={pStyle}>(Participação em reuniões e no desenvolvimento do projeto)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Cumprimento de Tarefas</FormLabel>
-                                                    <p style={pStyle}>(Qualidade e pontualidade)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comprometimento</FormLabel>
-                                                    <p style={pStyle}>(Abrir mão de certas coisas pelo tesla / Disponibilidade)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <FormControl>
-                                                    <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Organização</FormLabel>
-                                                    <p style={pStyle}>(Organização relacionada à ambiente de trabalho e à horários)</p>
-                                                    <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                        <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 1)} label="1" />
-                                                        <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 2)} label="2" />
-                                                        <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 3)} label="3" />
-                                                        <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 4)} label="4" />
-                                                        <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 5)} label="5" />
-                                                        <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 6)} label="6" />
-                                                        <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 7)} label="7" />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <br></br>
-                                                <p className="tituloTipoAvaliacao">no que você acha que seu colega mandou bem nesse último mês?</p>
-                                                <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 114, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-        
-                                                <br></br>
-                                                <p className="tituloTipoAvaliacao">qual ponto você acha que seu colega pode melhorar / desenvolver?</p>
-                                                <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 124, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-        
-                                            </Paper>
-                                        </Grid>
-        
-                                    </div>
-                                ));
-                            }
-    
-                        }
-                    }
-
-
-            } else{ //membro comum PRONTO
-                if(pessoasItem.referenciaidsubsistema === subsistemaId){
-                    if(pessoasItem.idpessoa === userId){
-                        children.push((
-                            <div className="blocoPessoa" style={blockStyle}>
-                                <Grid style={gridStyle}>
-                                    <Paper elevation={10} style={paperStyle}>
-                                        <p className="tituloNomePessoa">
-                                           {pessoasItem.nomecompleto} - AUTOAVALIAÇÃO
-                                        </p>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                            <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Uso da SUATI</FormLabel>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 144, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Presença</FormLabel>
-                                            <p style={pStyle}>(Presença nas reuniões e no CPH)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Participação</FormLabel>
-                                            <p style={pStyle}>(Participação em reuniões e no desenvolvimento do projeto)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Cumprimento de Tarefas</FormLabel>
-                                            <p style={pStyle}>(Qualidade e pontualidade)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comprometimento</FormLabel>
-                                            <p style={pStyle}>(Abrir mão de certas coisas pelo tesla / Disponibilidade)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <br></br>
-                                        <FormControl>
-                                            <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Organização</FormLabel>
-                                            <p style={pStyle}>(Organização relacionada à ambiente de trabalho e à horários)</p>
-                                            <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 1)} label="1" />
-                                                <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 2)} label="2" />
-                                                <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 3)} label="3" />
-                                                <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 4)} label="4" />
-                                                <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 5)} label="5" />
-                                                <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 6)} label="6" />
-                                                <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 7)} label="7" />
-                                            </RadioGroup>
-                                        </FormControl>
-
-                                        <br></br>
-                                        <p className="tituloTipoAvaliacao">Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?</p>
-                                        <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 134, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-
-
-                                    </Paper>
-                                </Grid>
-
-                            </div>
-                        ));
-                    } else{
-                        if(pessoasItem.diretor===1){
-                            children.push((
-                                <div className="blocoPessoa" style={blockStyle}>
-                                    <Grid style={gridStyle}>
-                                        <Paper elevation={10} style={paperStyle}>
-                                            <p className="tituloNomePessoa">
-                                                {pessoasItem.nomecompleto}
-                                            </p>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                                <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                                <p style={pStyle}>(Se sentir integrado na equipe)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Delegar Tarefas / Imparcialidade</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 74, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Facilitador</FormLabel>
-                                                <p style={pStyle}>(Mediador de ideias durante reuniões / Mediador de conflitos)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 84, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Dar Autonomia aos Membros</FormLabel>
-                                                <p style={pStyle}>(Elaboração e execução de projetos)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 94, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Acessibilidade</FormLabel>
-                                                <p style={pStyle}>(Disponível para tirar dúvidas / Aprender com as ideias dos membros)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 104, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">no que você acha que seu colega mandou bem nesse último mês?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 114, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">qual ponto você acha que seu colega pode melhorar / desenvolver?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 124, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                        </Paper>
-                                    </Grid>
-                                </div>
-                            ));
-                        } else{
-                            children.push((
-                                <div className="blocoPessoa" style={blockStyle}>
-                                    <Grid style={gridStyle}>
-                                        <Paper elevation={10} style={paperStyle}>
-                                            <p className="tituloNomePessoa">
-                                                {pessoasItem.nomecompleto}
-                                            </p>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Pontualidade</FormLabel>
-                                                <p style={pStyle}>(Chegar na hora em eventos e reuniões)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 3, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comunicação / Clareza</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 1, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Proatividade / Resolutivo / Criatividade</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 4, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Relacionamento / Interação</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 2, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Habilidade de Trabalho em Equipe</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 6, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Engajamento / Motivação</FormLabel>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 5, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Presença</FormLabel>
-                                                <p style={pStyle}>(Presença nas reuniões e no CPH)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 24, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Participação</FormLabel>
-                                                <p style={pStyle}>(Participação em reuniões e no desenvolvimento do projeto)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 34, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Cumprimento de Tarefas</FormLabel>
-                                                <p style={pStyle}>(Qualidade e pontualidade)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 44, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Comprometimento</FormLabel>
-                                                <p style={pStyle}>(Abrir mão de certas coisas pelo tesla / Disponibilidade)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 54, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <FormControl>
-                                                <FormLabel style={labelStyle} id="demo-row-radio-buttons-group-label">Organização</FormLabel>
-                                                <p style={pStyle}>(Organização relacionada à ambiente de trabalho e à horários)</p>
-                                                <RadioGroup style={radioStyle} row aria-labelledby="demo-row-radio-buttons-group-label" defaultValue="Não Sei" name="radio-buttons-group">
-                                                    <FormControlLabel value="op1" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 1)} label="1" />
-                                                    <FormControlLabel value="op2" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 2)} label="2" />
-                                                    <FormControlLabel value="op3" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 3)} label="3" />
-                                                    <FormControlLabel value="op4" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 4)} label="4" />
-                                                    <FormControlLabel value="op5" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 5)} label="5" />
-                                                    <FormControlLabel value="op6" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 6)} label="6" />
-                                                    <FormControlLabel value="op7" control={<Radio />} onClick={() => atualizaStateAvaliacao(pessoasItem.idpessoa, 64, 7)} label="7" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">no que você acha que seu colega mandou bem nesse último mês?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 114, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                            <br></br>
-                                            <p className="tituloTipoAvaliacao">qual ponto você acha que seu colega pode melhorar / desenvolver?</p>
-                                            <textarea onChange={(e) => { atualizaStateAvaliacao(pessoasItem.idpessoa, 124, e.target.value) }} placeholder=' Máximo de 255 Caractéres' rows="4" cols="50" maxLength={255} />
-    
-                                        </Paper>
-                                    </Grid>
-    
-                                </div>
-                            ));
-                        }
-                    }
-
-                }
-            }
-            
- 
         }
 
-        aux.push((
-            <React.Fragment>
-                {children}
-            </React.Fragment>
-        ));
+        media = media/resultLength;
 
-        setBlocos(aux);
+        return media;
+
     }
 
-    //seleciona todas pessoas e guarda no state e chama imprimeBlocos (logo acima)
-    async function selecionaPessoas() {
+    //seleciona todos subsistemas, coloca no state e chama função selecionaPessoas(logo abaixo)
+    async function selecionaSubsistemas(){
+        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas", {
+        }).then((response)=>{
+            setSubsistemas(response.data);
+            dados.setSubsistemas(subsistemas);
+            selecionaPessoas();
+        });
+    }
+
+    //seleciona todas pessoas, coloca no state e chama função selecionaAvaliacoes(logo abaixo)
+    async function selecionaPessoas(){
         return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaPessoas", {
-        }).then((response) => {
+        }).then((response)=>{
             setPessoas(response.data);
             dados.setPessoas(pessoas);
+            selecionaAvaliacoes();
+        });
+    }
+
+    //seleciona todas avaliações,e coloca no state e chama função imprimeBlocos(logo abaixo)
+    async function selecionaAvaliacoes(){
+        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoes", {
+        }).then((response)=>{
+            setAvaliacoes(response.data);
+            dados.setAvaliacoes(avaliacoes);
             imprimeBlocos();
         });
     }
 
-    //seleciona todos subsistemas e guarda no state e chama selecionaPessoas (logo acima)
-    async function selecionaSubsistemas() {
-        return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas", {
-        }).then((response) => {
-            setSubsistemas(response.data);
-            dados.setSubsistemas(subsistemas);
-            selecionaPessoas(); //chama pessoas
-        });
-    }
+    //criar state como array vazio.
+    //ter cinco states auxiliares, os quais armazenam as avaliacoes ATUAIS.
+    //dar push, um por um, do seguinte:
+    //taina{
+        //comprometimento=1;
+        //comunicacao=2;
+        //companheirismo=3;
+    //}
 
-    useEffect(() => {
+    //imprime o resultado das avaliações recebidas de todas pessoas
+    function imprimeBlocos() {
+        console.log("imprimindo blocos")
+        const paperStyle={padding: 20, width:600, margin:"20px auto"}
+        const aux = [];
+        const subsistemas = dados.state.subsistemas;
+        
+        for (let i = 0; i < subsistemas.length; i++) { //loop para passar por todos subsistemas
+          let children = [];
+          const subsistemasItem = subsistemas[i];
+          const pessoas = dados.state.pessoas;
+          
+          for (let j = 0; j < pessoas.length; j++) { //loop para passar por todos pessoas
+            const pessoasItem = pessoas[j];
+            
+            if (pessoasItem.referenciaidsubsistema === subsistemasItem.idsubsistema) { //confere se pessoa é de um certo subsistema
+              children.push((
+                <div className="blocoPessoa">
+                <Grid>
+                <Paper elevation={10} style={paperStyle}>
+
+                <p className="tituloNomePessoa">
+                  {pessoasItem.nomecompleto}
+                </p>
+                  <form>
+                    <p className="tituloTipoAvaliacao">Comunicação</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,1)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Companheirismo</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,2)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Pontualidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,3)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Proatividade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,4)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Enagajamento/Motivação</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,5)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Presença</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,6)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Presença</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,24)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Participação</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,34)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Cumprimento de tarefas</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,44)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Comprometimento</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,54)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Organização</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,64)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Imparcialidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,74)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Facilitador</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,84)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Dar Autonomia</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,94)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Acessibilidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,104)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Uso da Suati</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,144)}
+                    </p>
+
+                </form>
+                </Paper>
+                </Grid>
+                </div>
+                
+              ));
+            }
+          }
+          
+          aux.push((
+            <React.Fragment key={subsistemasItem.idsubsistema}>
+              <p className="tituloSubsistema">{subsistemasItem.nome}</p>
+              {children}
+            </React.Fragment>
+          ));
+        }
+
+        setBlocos(aux);
+      }
+
+      useEffect(()=>{
+        selecionaSubsistemas()
         setUserId(getTokenUser().id);
-    }, [])
+      }, [])
 
-    useEffect(() => {
+    useEffect(()=>{
         buscarUser(userId);
     }, [userId])
 
-    return <>{isAuthenticated() ?
+    return<>{isAuthenticated() ?
         <div>
-            <Grid>
-                <div className="pageAvaliacao">
-                    <p></p>
-                    <img src="https://static.wixstatic.com/media/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.png/v1/fill/w_367,h_259,al_c,q_85,usm_0.66_1.00_0.01/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.webp"
-                        width="100" height="70" alt="Logo Tesla" />
-                    <h3>Avaliação 360 | Versão Web 0.2</h3>
-                    <Container elevation={5} style={containerStyle}>
-                        <Card variant="outlined">
-                            <CardContent>
-                                <Typography variant="h5" style={{marginTop:'15px'}}>
-                                      BEM VINDOS A PRIMEIRA AVALIAÇÃO 360° COM O RH
-                                </Typography>
-                                <Typography style={{marginTop:'15px'}}>
-                                Esse é um projeto que o RH e a equipe Tesla tão botando muita fé pra ser algo efetivo e que consiga promover uma cultura de feedback frequente, a possibilidade de desenvolvimento dos membros, além de meios mais eficazes para a resolução de conflitos.
-                                </Typography>
-                                <Typography variant="h5" style={{marginTop:'15px'}}>
-                                     Pedimos o máximo de sinceridade possível e, que comecem os jogos!!
-                                </Typography>
-                            </CardContent>
-                           
-                        </Card>
-                        <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Começar a avaliação</Bootbot>
-                        <div>{blocos}</div>
-                        <Bootbot2 type="submit" variant='contained' onClick={() => enviaAvaliacoes()} fullWidth style={btstilo}> Enviar a avaliação</Bootbot2>
-                    </Container>
+        <Grid>
+        <div className="pageAvaliacao">
+        <p></p>
+        <img src="https://static.wixstatic.com/media/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.png/v1/fill/w_367,h_259,al_c,q_85,usm_0.66_1.00_0.01/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.webp"
+                    width="100" height="70" />
+
+                <h3>Avaliação 360 | Versão Web 0.1</h3>
+        <Container elevation={5} style={containerStyle}>
+            
+                <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Ver Resultados</Bootbot> 
+                <Typography> 
+                        <Link href='avaliacao'>
+                        Voltar Para a Avaliação.
+                        </Link>
+                    </Typography> 
+                <div>
+                    {blocos}
                 </div>
+
+            </Container>
+            </div>
             </Grid>
         </div>
         : <Redirect to="/login" />
@@ -2016,4 +308,4 @@ function Avaliacao() {
 
 }
 
-export default Avaliacao;
+export default Administrador;
