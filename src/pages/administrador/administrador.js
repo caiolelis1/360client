@@ -155,10 +155,98 @@ function Administrador(){
 
                 </form>
                 <form>
-                    <p className="tituloTipoAvaliacao">Qualidade do trabalho</p>
+                    <p className="tituloTipoAvaliacao">Enagajamento/Motivação</p>
                     
                     <p>
                         {media(pessoasItem.idpessoa,5)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Presença</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,6)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Presença</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,24)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Participação</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,34)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Cumprimento de tarefas</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,44)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Comprometimento</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,54)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Organização</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,64)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Imparcialidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,74)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Facilitador</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,84)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Dar Autonomia</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,94)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Acessibilidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,104)}
+                    </p>
+
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Uso da Suati</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,144)}
                     </p>
 
                 </form>
