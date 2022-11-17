@@ -45,6 +45,7 @@ function Membro (){
     return(
         <div>
             <div>Membro {params.id}</div>
+            <h3>{user.nomecompleto}</h3>
         </div>
         
     )
