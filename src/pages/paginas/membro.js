@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
+import Axios from 'axios';
 import { useParams } from "react-router-dom";
 
 function Membro (){
 
     const params = useParams();
+    let id = params.id;
 
+    const buscarUser = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+            id: id,
+        }).then((response) => {
+            console.log("achei algo!")
+        })
+
+    }
+
+    useEffect(()=>{
+        buscarUser(id)
+    },[])
     //buscar usuario no db
 
     //buscar notas no db
