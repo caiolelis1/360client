@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 
 function Membro (){
 
-    const [user, setUser] = useState();
-    const [notas, setNotas] = useState();
+    const [user, setUser] = useState({});
+    const [notas, setNotas] = useState([]);
     const params = useParams();
     let id = params.id;
 
@@ -15,7 +15,7 @@ function Membro (){
             userid: id,
         }).then((response) => {
             setUser(response.data[0]);
-            console.log(response.data[0]);
+            console.log(user);
             buscarNotas(id)
         })
 
@@ -25,8 +25,9 @@ function Membro (){
         Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
             id:id,
         }).then((response) => {
+            console.log("achei")
             setNotas(response.data);
-            console.log(response.data)
+            console.log(notas)
         })
     }
 
@@ -44,6 +45,7 @@ function Membro (){
     return(
         <div>
             <div>Membro {params.id}</div>
+            <h3>{user.nomecompleto}</h3>
         </div>
         
     )
