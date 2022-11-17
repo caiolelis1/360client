@@ -25,7 +25,6 @@ function Membro (){
         Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
             id:id,
         }).then((response) => {
-            console.log("achei")
             setNotas(response.data);
             console.log(notas)
         })
@@ -46,6 +45,7 @@ function Membro (){
         <div>
             <div>Membro {params.id}</div>
             <h3>{user.nomecompleto}</h3>
+            {notas.map( (nota) => <h1>{nota.nota}</h1>)}        
         </div>
         
     )
