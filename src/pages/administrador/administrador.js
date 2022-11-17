@@ -101,7 +101,7 @@ function Administrador(){
     //imprime o resultado das avaliações recebidas de todas pessoas
     function imprimeBlocos() {
         console.log("imprimindo blocos")
-        const paperStyle={padding: 20, height:'70vh', width:600, margin:"20px auto"}
+        const paperStyle={padding: 20, width:600, margin:"20px auto"}
         const aux = [];
         const subsistemas = dados.state.subsistemas;
         
