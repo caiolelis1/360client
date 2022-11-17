@@ -1,17 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
 
 function Membro (){
 
+    const [user, setUser] = useState();
     const params = useParams();
     let id = params.id;
+
 
     const buscarUser = (id) => {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
-            console.log(response)
+            setUser(response.data[0]);
         })
 
     }
@@ -28,7 +30,11 @@ function Membro (){
     //fazer grafico?
 
     return(
-        <div>Membro {params.id}</div>
+        <div>
+            <div>Membro {params.id}</div>
+            <div>{user.nomecompleto}</div>
+        </div>
+        
     )
 }
 
