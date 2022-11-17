@@ -10,18 +10,18 @@ function Membro (){
     let id = params.id;
 
 
-    const buscarUser = (id) => {      //buscar usuario no db
+    const buscarUser = (id) => {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
             setUser(response.data[0]);
-            console.log('user: ' + user.nomecompleto);
+            console.log(response.data[0]);
             buscarNotas(id)
         })
 
     }
 
-    const buscarNotas = (id) => {     //buscar notas no db
+    const buscarNotas = (id) => {
         Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
             id:id,
         }).then((response) => {
@@ -33,9 +33,9 @@ function Membro (){
     useEffect(()=>{
         buscarUser(id);
     },[])
+    //buscar usuario no db
 
-
-
+    //buscar notas no db
 
     //fazer media
     //mostrar cada nota separadamente
