@@ -1,32 +1,67 @@
 import React, { useEffect, useState } from "react";
 import Axios from 'axios';
+import { useParams } from "react-router-dom";
 
-function Lista (){
+function Membro (){
 
-    const [membros, setMembros] = useState([]);
+    const [user, setUser] = useState({});
+    const [notas, setNotas] = useState([]);
+    const [tipos, setTipos] = useState([]);
 
-    const buscarMembros = () => {
-        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaPessoasOrdem', {
+    const params = useParams();
+    let id = params.id;
+
+
+    const buscarUser = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+            userid: id,
         }).then((response) => {
-            console.log(response.data)
-            setMembros(response.data)
+            setUser(response.data[0]);
+            console.log(user);
+            buscarNotas(id)
+        })
+
+    }
+
+    const buscarNotas = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
+            id:id,
+        }).then((response) => {
+            setNotas(response.data);
+            console.log(notas)
         })
     }
 
-    useEffect(() => {
-        buscarMembros();
-    }, [])
+    const buscarTipos = () =>{
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaTipos',{}
+        ).then((response) => {
+            setTipos(response.data);
+        })
+    }
+
+    useEffect(()=>{
+        console.log(id)
+        buscarUser(id);
+        buscarTipos();
+    },[])
+    //buscar usuario no db
+
+    //buscar notas no db
+
+    //fazer media
+    //mostrar cada nota separadamente
+    //fazer grafico?
 
     return(
         <div>
-            {membros.map( (membro) => 
-                <div>
-                    <a href={'/membro/' + membro.idpessoa}>{membro.nomecompleto}</a>
-                </div>
 
-            )}
+            <h3>{user.nomecompleto}</h3>
+            {tipos.map( (tipo) =>
+                <h1>{tipo.nome}</h1>
+            )}        
         </div>
+        
     )
 }
 
-export default Lista;
+export default Membro;
