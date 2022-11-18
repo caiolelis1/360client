@@ -6,7 +6,7 @@ function Lista (){
     const [membros, setMembros] = useState([]);
 
     const buscarMembros = () => {
-        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaPessoas', {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaPessoasOrdem', {
         }).then((response) => {
             console.log(response.data)
             setMembros(response.data)
