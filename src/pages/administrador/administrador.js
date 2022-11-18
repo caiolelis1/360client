@@ -6,7 +6,7 @@ import { useUnstated } from '@gitbook/unstated';
 import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import { isAuthenticated, getTokenUser } from '../../services/auth';
 
-function Administrador() {
+function Administrador(){
 
     const [userId, setUserId] = useState();
     const [subsistemas, setSubsistemas] = useState([]);
@@ -16,53 +16,54 @@ function Administrador() {
     const [blocos, setBlocos] = useState([]);
 
     const dados = useUnstated(DadosUnstated);
-    const btstilo2 = { margin: '10px 10px', width: 230 };
+    const btstilo2={margin:'10px 10px', width:230};
     const Bootbot = styled(Button)({
         backgroundColor: '#4ed840',
         borderColor: '#4ed840',
     });
-    const containerStyle = { padding: 20, margin: "20px auto", maxWidth: 1200 };
+    const containerStyle={padding: 20, margin:"20px auto", maxWidth:1200};
 
     const buscarUser = (id) => {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
-            if (response.data[0].admin != 1) {
+            if(response.data[0].admin!=1){
                 window.location.replace("http://teslaufmg.online")
             }
         })
     }
 
     //faz a media de um tipo das avaliações de uma pessoa
-    function media(id, tipo) {
+    function media(id,tipo){
+        console.log('fazendo media')
 
         const resultaux = dados.state.avaliacoes.filter(item => item.referenciaidpessoa === id);
         const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
         let resultLength = 0;
         let media = 0;
-        for (let i in result) {
+        for(let i in result) {
 
-            if (result[i].nota) {
+            if(result[i].nota){
 
                 resultLength++;
-
-                result[i].nota = parseInt(result[i].nota, 2);
+                
+                result[i].nota = parseInt(result[i].nota, 10);
 
                 media += result[i].nota;
             }
 
         }
 
-        media = media / resultLength;
+        media = media/resultLength;
 
         return media;
 
     }
 
     //seleciona todos subsistemas, coloca no state e chama função selecionaPessoas(logo abaixo)
-    async function selecionaSubsistemas() {
+    async function selecionaSubsistemas(){
         return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas", {
-        }).then((response) => {
+        }).then((response)=>{
             setSubsistemas(response.data);
             dados.setSubsistemas(subsistemas);
             selecionaPessoas();
@@ -70,9 +71,9 @@ function Administrador() {
     }
 
     //seleciona todas pessoas, coloca no state e chama função selecionaAvaliacoes(logo abaixo)
-    async function selecionaPessoas() {
+    async function selecionaPessoas(){
         return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaPessoas", {
-        }).then((response) => {
+        }).then((response)=>{
             setPessoas(response.data);
             dados.setPessoas(pessoas);
             selecionaAvaliacoes();
@@ -80,9 +81,9 @@ function Administrador() {
     }
 
     //seleciona todas avaliações,e coloca no state e chama função imprimeBlocos(logo abaixo)
-    async function selecionaAvaliacoes() {
+    async function selecionaAvaliacoes(){
         return Axios.post("https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoes", {
-        }).then((response) => {
+        }).then((response)=>{
             setAvaliacoes(response.data);
             dados.setAvaliacoes(avaliacoes);
             imprimeBlocos();
@@ -93,216 +94,214 @@ function Administrador() {
     //ter cinco states auxiliares, os quais armazenam as avaliacoes ATUAIS.
     //dar push, um por um, do seguinte:
     //taina{
-    //comprometimento=1;
-    //comunicacao=2;
-    //companheirismo=3;
+        //comprometimento=1;
+        //comunicacao=2;
+        //companheirismo=3;
     //}
 
     //imprime o resultado das avaliações recebidas de todas pessoas
     function imprimeBlocos() {
         console.log("imprimindo blocos")
-        const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
-        const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
-        const gridStyle = { padding: 5 }
+        const paperStyle={padding: 20, width:600, margin:"20px auto"}
         const aux = [];
         const subsistemas = dados.state.subsistemas;
-
+        
         for (let i = 0; i < subsistemas.length; i++) { //loop para passar por todos subsistemas
-            let children = [];
-            const subsistemasItem = subsistemas[i];
-            const pessoas = dados.state.pessoas;
+          let children = [];
+          const subsistemasItem = subsistemas[i];
+          const pessoas = dados.state.pessoas;
+          
+          for (let j = 0; j < pessoas.length; j++) { //loop para passar por todos pessoas
+            const pessoasItem = pessoas[j];
+            
+            if (pessoasItem.referenciaidsubsistema === subsistemasItem.idsubsistema) { //confere se pessoa é de um certo subsistema
+              children.push((
+                <div className="blocoPessoa">
+                <Grid>
+                <Paper elevation={10} style={paperStyle}>
 
-            for (let j = 0; j < pessoas.length; j++) { //loop para passar por todos pessoas
-                const pessoasItem = pessoas[j];
+                <p className="tituloNomePessoa">
+                  {pessoasItem.nomecompleto}
+                </p>
+                  <form>
+                    <p className="tituloTipoAvaliacao">Comunicação</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,1)}
+                    </p>
 
-                if (pessoasItem.referenciaidsubsistema === subsistemasItem.idsubsistema) { //confere se pessoa é de um certo subsistema
-                    children.push((
-                        <div className="blocoPessoa" style={blockStyle}>
-                            <Grid style={gridStyle}>
-                                <Paper elevation={10} style={paperStyle}>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Companheirismo</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,2)}
+                    </p>
 
-                                    <p className="tituloNomePessoa">
-                                        {pessoasItem.nomecompleto}
-                                    </p>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Comunicação</p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Pontualidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,3)}
+                    </p>
 
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 1)}
-                                        </p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Proatividade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,4)}
+                    </p>
 
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Companheirismo</p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Enagajamento/Motivação</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,5)}
+                    </p>
 
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 2)}
-                                        </p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Presença</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,6)}
+                    </p>
 
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Pontualidade</p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Presença</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,24)}
+                    </p>
 
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 3)}
-                                        </p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Participação</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,34)}
+                    </p>
 
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Proatividade</p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Cumprimento de tarefas</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,44)}
+                    </p>
 
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 4)}
-                                        </p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Comprometimento</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,54)}
+                    </p>
 
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Enagajamento/Motivação</p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Organização</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,64)}
+                    </p>
 
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 5)}
-                                        </p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Imparcialidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,74)}
+                    </p>
 
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Trabalho em equipe</p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Facilitador</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,84)}
+                    </p>
 
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 6)}
-                                        </p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Dar Autonomia</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,94)}
+                    </p>
 
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Presença</p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Acessibilidade</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,104)}
+                    </p>
 
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 24)}
-                                        </p>
+                </form>
+                <form>
+                    <p className="tituloTipoAvaliacao">Uso da Suati</p>
+                    
+                    <p>
+                        {media(pessoasItem.idpessoa,144)}
+                    </p>
 
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Participação</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 34)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Cumprimento de tarefas</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 44)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Comprometimento</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 54)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Organização</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 64)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Imparcialidade</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 74)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Facilitador</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 84)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Dar Autonomia</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 94)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Acessibilidade</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 104)}
-                                        </p>
-
-                                    </form>
-                                    <form>
-                                        <p className="tituloTipoAvaliacao">Uso da Suati</p>
-
-                                        <p>
-                                            {media(pessoasItem.idpessoa, 144)}
-                                        </p>
-
-                                    </form>
-                                </Paper>
-                            </Grid>
-                        </div>
-
-                    ));
-                }
+                </form>
+                </Paper>
+                </Grid>
+                </div>
+                
+              ));
             }
-
-            aux.push((
-                <React.Fragment key={subsistemasItem.idsubsistema}>
-                    <p className="tituloSubsistema">{subsistemasItem.nome}</p>
-                    {children}
-                </React.Fragment>
-            ));
+          }
+          
+          aux.push((
+            <React.Fragment key={subsistemasItem.idsubsistema}>
+              <p className="tituloSubsistema">{subsistemasItem.nome}</p>
+              {children}
+            </React.Fragment>
+          ));
         }
 
         setBlocos(aux);
-    }
+      }
 
-    useEffect(() => {
+      useEffect(()=>{
         selecionaSubsistemas()
         setUserId(getTokenUser().id);
-    }, [])
+      }, [])
 
-    useEffect(() => {
+    useEffect(()=>{
         buscarUser(userId);
     }, [userId])
 
-    return <>{isAuthenticated() ?
+    return<>{isAuthenticated() ?
         <div>
-            <Grid>
-                <div className="pageAvaliacao">
-                    <p></p>
-                    <img src="https://static.wixstatic.com/media/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.png/v1/fill/w_367,h_259,al_c,q_85,usm_0.66_1.00_0.01/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.webp"
-                        width="100" height="70" />
+        <Grid>
+        <div className="pageAvaliacao">
+        <p></p>
+        <img src="https://static.wixstatic.com/media/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.png/v1/fill/w_367,h_259,al_c,q_85,usm_0.66_1.00_0.01/d979eb_5158f599534e4f0480b44a267fc68e83~mv2_d_3508_2480_s_4_2.webp"
+                    width="100" height="70" />
 
-                    <h3>Avaliação 360 | Versão Web 0.1</h3>
-                    <Container elevation={5} style={containerStyle}>
-
-                        <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Ver Resultados</Bootbot>
-                        <Typography>
-                            <Link href='avaliacao'>
-                                Voltar Para a Avaliação.
-                            </Link>
-                        </Typography>
-                        <div>
-                            {blocos}
-                        </div>
-
-                    </Container>
+                <h3>Avaliação 360 | Versão Web 0.1</h3>
+        <Container elevation={5} style={containerStyle}>
+            
+                <Bootbot type="submit" variant='contained' onClick={() => selecionaSubsistemas()} fullWidth style={btstilo2}> Ver Resultados</Bootbot> 
+                <Typography> 
+                        <Link href='avaliacao'>
+                        Voltar Para a Avaliação.
+                        </Link>
+                    </Typography> 
+                <div>
+                    {blocos}
                 </div>
+
+            </Container>
+            </div>
             </Grid>
         </div>
         : <Redirect to="/login" />
