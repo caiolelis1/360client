@@ -21,7 +21,7 @@ function Lista (){
         <div>
             {membros.map( (membro) => 
                 <div>
-                    <a>{membro.nomecompleto}</a>
+                    <a href="membro/{membro.idpessoa}">{membro.nomecompleto}</a>
                 </div>
 
             )}
