@@ -20,7 +20,10 @@ function Lista (){
     return(
         <div>
             {membros.map( (membro) => 
-                <a>{membro.nomecompleto}</a>
+                <div>
+                    <a>{membro.nomecompleto}</a>
+                </div>
+
             )}
         </div>
     )
