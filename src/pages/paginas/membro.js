@@ -57,7 +57,7 @@ function Membro() {
 
             resultLength++;
 
-            result[i].nota = parseInt(result[i].nota, 2);
+            result[i].nota = parseInt(result[i].nota, 10);
 
             media += result[i].nota;
          }
