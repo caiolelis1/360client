@@ -41,9 +41,8 @@ function Membro() {
    }
 
    useEffect(() => {
-    console.log(id)
       buscarUser(id);
-   }, [])
+   }, [id])
 
    function media(id, tipo) {
 
