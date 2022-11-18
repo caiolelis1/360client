@@ -51,6 +51,7 @@ function Membro() {
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
+        console.log(result[i].nota)
 
          if (result[i].nota) {
 
