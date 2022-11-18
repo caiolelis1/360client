@@ -1,17 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function Lista (){
 
-    //buscar sistema no db
+    const [membros, setMembros] = useState([]);
 
-    //buscar notas de cada membro no db
+    const buscarMembros = () => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaPessoas', {
+        }).then((response) => {
+            console.log(response.data)
+            setMembros(response.data)
+        })
+    }
 
-    //fazer media total e de cada membro
-    //mostrar cada nota separadamente
-    //fazer grafico?
+    useEffect(() => {
+        buscarMembros();
+    }, [])
 
     return(
-        <div>Lista</div>
+        <div>
+            {membros.map( (membro) => 
+                <a>{membro.nomecompleto}</a>
+            )}
+        </div>
     )
 }
 
