@@ -51,7 +51,7 @@ function Membro() {
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
-        console.log(result[i].nota)
+         console.log(result[i].nota)
 
          if (result[i].nota) {
 
@@ -65,8 +65,90 @@ function Membro() {
       }
 
       media = media / resultLength;
+      const mediaArredondada = +(media.toFixed(1))
 
-      return media;
+      return mediaArredondada;
+
+   }
+
+   function arrayNota(id, tipo) {
+
+      const resultaux = notas.filter(item => item.referenciaidpessoa === id);
+      const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
+      let space = " - ";
+      var arrayNotas = [];
+      for (let i in result) {
+         console.log(result[i].nota)
+
+         if (result[i].nota) {
+            result[i].nota = parseInt(result[i].nota, 10);
+
+            arrayNotas.push(result[i].nota);
+            arrayNotas.push(space);
+         }
+      }
+      arrayNotas.pop();
+      return arrayNotas;
+   }
+
+   function imprimeNotas(title, id) {
+      var aux = arrayNota(user.idpessoa, id)
+
+      if (aux.length > 1) {
+         return (
+            <form>
+               <p className="tituloTipoAvaliacao">{title}</p>
+
+               <p>Media:</p>
+               <p>
+                  {media(user.idpessoa, id)}
+               </p>
+               <p>Notas:</p>
+               <p>
+                  {arrayNota(user.idpessoa, id)}
+               </p>
+
+            </form>
+         )
+      }
+
+      if (aux.length === 1) {
+         return (
+            <form>
+               <p className="tituloTipoAvaliacao">{title}</p>
+               <p>Nota:</p>
+               <p>
+                  {arrayNota(user.idpessoa, id)}
+               </p>
+
+            </form>
+         )
+      }
+   }
+
+   function imprimeFeedback(title, id) {
+
+      const resultaux = notas.filter(item => item.referenciaidpessoa === id);
+      const result = resultaux.filter(item => item.referenciaidtipoavaliacao === id);
+      var feedbackArray = [];
+
+      for (let i in result) {
+         console.log("CHEGUEI AQUI")
+
+         if (result[i].nota) {
+            feedbackArray.push(result[i].nota)
+         }
+
+      }
+
+      return (
+         <form>
+            <p className="tituloTipoAvaliacao">{title}</p>
+            <p className="feedbackText">
+               {result}
+            </p>
+         </form>
+      )
 
    }
 
@@ -86,134 +168,28 @@ function Membro() {
                   <p className="tituloNomePessoa">
                      {user.nomecompleto}
                   </p>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Comunicação</p>
-
-                     <p>
-                        {media(user.idpessoa, 1)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Companheirismo</p>
-
-                     <p>
-                        {media(user.idpessoa, 2)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Pontualidade</p>
-
-                     <p>
-                        {media(user.idpessoa, 3)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Proatividade</p>
-
-                     <p>
-                        {media(user.idpessoa, 4)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Enagajamento/Motivação</p>
-
-                     <p>
-                        {media(user.idpessoa, 5)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Trabalho em Equipe</p>
-
-                     <p>
-                        {media(user.idpessoa, 6)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Presença</p>
-
-                     <p>
-                        {media(user.idpessoa, 24)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Participação</p>
-
-                     <p>
-                        {media(user.idpessoa, 34)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Cumprimento de tarefas</p>
-
-                     <p>
-                        {media(user.idpessoa, 44)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Comprometimento</p>
-
-                     <p>
-                        {media(user.idpessoa, 54)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Organização</p>
-
-                     <p>
-                        {media(user.idpessoa, 64)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Imparcialidade</p>
-
-                     <p>
-                        {media(user.idpessoa, 74)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Facilitador</p>
-
-                     <p>
-                        {media(user.idpessoa, 84)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Dar Autonomia</p>
-
-                     <p>
-                        {media(user.idpessoa, 94)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Acessibilidade</p>
-
-                     <p>
-                        {media(user.idpessoa, 104)}
-                     </p>
-
-                  </form>
-                  <form>
-                     <p className="tituloTipoAvaliacao">Uso da Suati</p>
-
-                     <p>
-                        {media(user.idpessoa, 144)}
-                     </p>
-
-                  </form>
+                  {imprimeNotas("Comunicação", 1)}
+                  {imprimeNotas("Companheirismo", 2)}
+                  {imprimeNotas("Pontualidade", 3)}
+                  {imprimeNotas("Proatividade", 4)}
+                  {imprimeNotas("Engajamento / Motivação", 5)}
+                  {imprimeNotas("Trabalho em Equipe", 6)}
+                  {imprimeNotas("Presença", 24)}
+                  {imprimeNotas("Participação", 34)}
+                  {imprimeNotas("Presença", 24)}
+                  {imprimeNotas("Presença", 34)}
+                  {imprimeNotas("Cumprimento de tarefas", 44)}
+                  {imprimeNotas("Comprometimento", 54)}
+                  {imprimeNotas("Organização", 64)}
+                  {imprimeNotas("Imparcialidade", 74)}
+                  {imprimeNotas("Facilitador", 84)}
+                  {imprimeNotas("Dar Autonomia", 94)}
+                  {imprimeNotas("Acessibilidade", 104)}
+                  {imprimeNotas("Uso da Suati", 144)}
+               </Paper>
+               <Paper elevation={10} style={paperStyle}>
+                  <p className="tituloNomePessoa"> Feedbacks </p>
+                  {imprimeFeedback("O que acham que mandou bem", 114)}
                </Paper>
             </Grid>
          </div>
