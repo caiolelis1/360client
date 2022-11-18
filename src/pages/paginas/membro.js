@@ -91,6 +91,21 @@ function Membro() {
       return arrayNotas;
    }
 
+   function arrayTexto(id, tipo) {
+
+      const resultaux = notas.filter(item => item.referenciaidpessoa === id);
+      const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
+      var arrayNotas = [];
+      for (let i in result) {
+         console.log(result[i].nota)
+
+         if (result[i].nota) {
+            arrayNotas.push(result[i].nota);
+         }
+      }
+      return arrayNotas;
+   }
+
    function imprimeNotas(title, id) {
       var aux = arrayNota(user.idpessoa, id)
 
@@ -127,25 +142,19 @@ function Membro() {
    }
 
    function imprimeFeedback(title, id) {
-
-      const resultaux = notas.filter(item => item.referenciaidpessoa === id);
-      const result = resultaux.filter(item => item.referenciaidtipoavaliacao === id);
-      var feedbackArray = [];
-
-      for (let i in result) {
-         console.log("CHEGUEI AQUI")
-
-         if (result[i].nota) {
-            feedbackArray.push(result[i].nota)
-         }
-
-      }
+      const divStyle = { marginBottom: "10px" }
+      const array = arrayTexto(user.idpessoa, id);
 
       return (
          <form>
             <p className="tituloTipoAvaliacao">{title}</p>
             <p className="feedbackText">
-               {result}
+               {array.map((texto) =>
+                  <div style={divStyle}>
+                     <p>{texto}</p>
+                  </div>
+
+               )}
             </p>
          </form>
       )
@@ -189,7 +198,9 @@ function Membro() {
                </Paper>
                <Paper elevation={10} style={paperStyle}>
                   <p className="tituloNomePessoa"> Feedbacks </p>
-                  {imprimeFeedback("O que acham que mandou bem", 114)}
+                  {imprimeFeedback("No que você acha que seu colega mandou bem nesse último mês?", 114)}
+                  {imprimeFeedback("Qual ponto você acha que seu colega pode melhorar / desenvolver?", 124)}
+                  {imprimeFeedback("Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?", 134)}
                </Paper>
             </Grid>
          </div>
