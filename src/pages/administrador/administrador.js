@@ -165,7 +165,7 @@ function Administrador() {
 
                                     </form>
                                     <form>
-                                        <p className="tituloTipoAvaliacao">Presença</p>
+                                        <p className="tituloTipoAvaliacao">Trabalho em equipe</p>
 
                                         <p>
                                             {media(pessoasItem.idpessoa, 6)}
