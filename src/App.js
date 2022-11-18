@@ -11,6 +11,7 @@ import NotReady from './pages/avaliacao/notReady';
 import Membro from './pages/paginas/membro';
 import Sistema from './pages/paginas/sistema';
 import Subsistema from './pages/paginas/subsistema';
+import Lista from './pages/paginas/lista';
 
 function App(){
 
@@ -26,6 +27,7 @@ function App(){
         <Route exact path="/membro/:id" component= {Membro}/>
         <Route exact path="/sistema" component={Sistema}/>
         <Route exact path="/subsistema" component={Subsistema} />
+        <Route exact path="/lista" component={Lista} />
       </Switch>
     </Router>
     </Provider>
