@@ -35,7 +35,6 @@ function Administrador(){
 
     //faz a media de um tipo das avaliações de uma pessoa
     function media(id,tipo){
-        console.log('fazendo media')
 
         const resultaux = dados.state.avaliacoes.filter(item => item.referenciaidpessoa === id);
         const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
@@ -45,6 +44,7 @@ function Administrador(){
 
             if(result[i].nota){
 
+                console.log("acontecendo")
                 resultLength++;
                 
                 result[i].nota = parseInt(result[i].nota, 10);
@@ -164,7 +164,7 @@ function Administrador(){
 
                 </form>
                 <form>
-                    <p className="tituloTipoAvaliacao">Presença</p>
+                    <p className="tituloTipoAvaliacao">Trabalho em equipe</p>
                     
                     <p>
                         {media(pessoasItem.idpessoa,6)}
