@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.nameList {
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: inset 0 0 0 0 #999999;
+  color: #999999;
+  margin: 0 -.5rem;
+  padding: 0 .5rem;
+  transition: color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+
+}
+
+.nameList:hover {
+  box-shadow: inset 400px 0 0 0 #4ed840;
+  color: white;
+}
