@@ -36,7 +36,7 @@ function Membro() {
          id: id,
       }).then((response) => {
          setNotas(response.data);
-         console.log(notas)
+         console.log(response.data)
       })
    }
 
