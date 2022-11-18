@@ -55,8 +55,8 @@ function Membro (){
         <div>
 
             <h3>{user.nomecompleto}</h3>
-            {notas.map( (nota) =>
-                <h1>{nota.nota}</h1>
+            {tipos.map( (tipo) =>
+                <h1>{tipo.nome}</h1>
             )}        
         </div>
         
