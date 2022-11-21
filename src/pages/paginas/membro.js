@@ -185,8 +185,6 @@ function Membro() {
                   {imprimeNotas("Trabalho em Equipe", 6)}
                   {imprimeNotas("Presença", 24)}
                   {imprimeNotas("Participação", 34)}
-                  {imprimeNotas("Presença", 24)}
-                  {imprimeNotas("Presença", 34)}
                   {imprimeNotas("Cumprimento de tarefas", 44)}
                   {imprimeNotas("Comprometimento", 54)}
                   {imprimeNotas("Organização", 64)}
