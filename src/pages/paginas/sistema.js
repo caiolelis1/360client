@@ -34,7 +34,7 @@ function Sistema (){
     Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUsersSistema', {
        sistemaid: id,
     }).then((response) => {
-       setUsers(response);
+       setUsers(response.data);
        console.log(response);
        //buscarNotas(id)
     })
@@ -54,6 +54,12 @@ function Sistema (){
         buscarSistema(id);
         buscarUsers(id);
     }, [id])
+
+    useEffect(() => {
+        for(let i = 0; i < users.length; i++){
+            buscarNotas(users[i].idpessoa)
+        }
+    }, [users])
 
     return(
         <div>
