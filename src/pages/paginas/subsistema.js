@@ -37,10 +37,23 @@ function Subsistema (){
         })
     }
 
+    const buscarNotas = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
+           id: id,
+        }).then((response) => {
+           setNotas(response.data);
+           console.log(response.data)
+        })
+     }
+
     useEffect(() => {
         buscarSubsistema(id);
         buscarUsers(id);
     }, [id]);
+
+    useEffect(() => {
+        console.log(users)
+    }, [users])
 
     return(
         <div>
