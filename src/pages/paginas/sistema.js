@@ -35,7 +35,7 @@ function Sistema (){
        sistemaid: id,
     }).then((response) => {
        setUsers(response);
-       console.log(user);
+       console.log(users);
        //buscarNotas(id)
     })
 
