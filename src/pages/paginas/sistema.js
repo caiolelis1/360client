@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Axios from 'axios';
+import { useParams } from "react-router-dom";
 
 function Sistema (){
 
@@ -12,6 +14,7 @@ function Sistema (){
 
     const [sistema, setSistema] = useState({});
     const [user, setUser] = useState({});
+    const [notas, setNotas] = useState([])
 
     
    const params = useParams();
