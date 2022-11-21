@@ -53,6 +53,9 @@ function Subsistema (){
 
     useEffect(() => {
         console.log(users)
+        for (let i = 0; i < users.length; i++){
+            buscarNotas(users[i].idpessoa)
+        }
     }, [users])
 
     return(
