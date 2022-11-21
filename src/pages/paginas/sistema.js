@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function Sistema (){
 
@@ -10,8 +10,52 @@ function Sistema (){
     //mostrar cada nota separadamente
     //fazer grafico?
 
+    const [sistema, setSistema] = useState({});
+    const [user, setUser] = useState({});
+
+    
+   const params = useParams();
+   let id = params.id;
+
+   const buscarSistema = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas', {
+            id: id,
+        }).then((response) => {
+            setSistema(response.data[0]);
+        })
+   }
+
+   
+   const buscarUser = (id) => {
+    Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+       userid: id,
+    }).then((response) => {
+       setUser(response.data[0]);
+       console.log(user);
+       buscarNotas(id)
+    })
+
+ }
+
+ const buscarNotas = (id) => {
+    Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
+       id: id,
+    }).then((response) => {
+       setNotas(response.data);
+       console.log(response.data)
+    })
+ }
+
+    useEffect(() => {
+        buscarSistema(id);
+        buscarUser(id);
+    }, [id])
+
     return(
-        <div>Sistema</div>
+        <div>
+            <h3>Sistema {id}</h3>
+            <h3>{sistema.nome}</h3>
+        </div>
     )
 }
 
