@@ -13,7 +13,7 @@ function Sistema (){
     //fazer grafico?
 
     const [sistema, setSistema] = useState({});
-    const [user, setUser] = useState({});
+    const [users, setUsers] = useState([]);
     const [notas, setNotas] = useState([])
 
     
@@ -30,13 +30,13 @@ function Sistema (){
    }
 
    
-   const buscarUser = (id) => {
-    Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
-       userid: id,
+   const buscarUsers = (id) => {
+    Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUsersSistema', {
+       sistemaid: id,
     }).then((response) => {
-       setUser(response.data[0]);
+       setUsers(response);
        console.log(user);
-       buscarNotas(id)
+       //buscarNotas(id)
     })
 
  }
@@ -52,7 +52,7 @@ function Sistema (){
 
     useEffect(() => {
         buscarSistema(id);
-        buscarUser(id);
+        buscarUsers(id);
     }, [id])
 
     return(
