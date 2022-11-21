@@ -33,7 +33,7 @@ function Subsistema (){
             subsistemaid: id,
         }).then((response) =>{
             console.log(response)
-            setUsers(response)
+            setUsers(response.data)
         })
     }
 
