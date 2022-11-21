@@ -21,9 +21,10 @@ function Sistema (){
    let id = params.id;
 
    const buscarSistema = (id) => {
-        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas', {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSistema', {
             id: id,
         }).then((response) => {
+            console
             setSistema(response.data[0]);
         })
    }
