@@ -25,8 +25,8 @@ function App(){
         <Route exact path="/avaliacao" component= {Avaliacao}/>
         <Route exact path="/registro" component= {Registro}/>
         <Route exact path="/membro/:id" component= {Membro}/>
-        <Route exact path="/sistema" component={Sistema}/>
-        <Route exact path="/subsistema" component={Subsistema} />
+        <Route exact path="/sistema/:id" component={Sistema}/>
+        <Route exact path="/subsistema/:id" component={Subsistema} />
         <Route exact path="/lista" component={Lista} />
       </Switch>
     </Router>
