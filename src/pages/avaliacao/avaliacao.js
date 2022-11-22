@@ -51,8 +51,8 @@ function Avaliacao() {
             }
 
             if (response.data[0].avaliou === 1) {
-                alert("Você já avaliou, obrigado!");
-                window.location.replace("https://youthful-euclid-69864e.netlify.app/login")
+                alert("Você já avaliou, bem vindo à tela dos resultados!");
+                window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
             }
 
         })
