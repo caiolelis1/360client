@@ -4,8 +4,8 @@ import Axios from 'axios';
 
 
 function Lista() {
-
-   const gridStyle = { padding: 5 }
+   const [blocos, setBlocos] = useState([]);
+   const [membros, setMembros] = useState([]);
 
    const containerStyle = {
       padding: 20,
@@ -13,20 +13,13 @@ function Lista() {
       maxWidth: 1200
    };
 
-   const paperStyle = {
-      padding: 20,
-      width: 600,
-      margin: "20px auto"
-   };
-
-   const blockStyle = {
-      color: "white",
-      backgroundColor: "white",
-      margin: "auto"
-   };
+   const btstilo2 = { margin: '10px 10px', width: 230 };
+   const Bootbot = styled(Button)({
+      backgroundColor: '#4ed840',
+      borderColor: '#4ed840',
+   });
    const divStyle = { margin: "10px auto" };
 
-   const [membros, setMembros] = useState([]);
 
    const buscarMembros = () => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaPessoasOrdem', {
@@ -40,6 +33,42 @@ function Lista() {
       buscarMembros();
    }, [])
 
+   function imprimeBlocos() {
+      console.log("imprimindo blocos")
+      const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
+      const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
+      const gridStyle = { padding: 5 }
+      const aux = [];
+      let children = [];
+
+      children.push((
+         <Container elevation={5} style={containerStyle}>
+
+            <div className="blocoPessoa" style={blockStyle}>
+               <Grid style={gridStyle}>
+                  <Paper elevation={10} style={paperStyle}>
+                     <p className="tituloNomePessoa">Membros</p>
+                     {membros.map((membro) =>
+                        <div style={divStyle}>
+                           <a className="nameList" href={'/membro/' + membro.idpessoa}>{membro.nomecompleto}</a>
+                        </div>
+                     )}
+                  </ Paper>
+               </ Grid>
+            </div>
+
+         </Container>
+      ));
+
+      aux.push((
+         <React.Fragment>
+            {children}
+         </React.Fragment>
+      ))
+
+      setBlocos(aux);
+   }
+
    return (
       <div>
          <Grid>
@@ -51,20 +80,14 @@ function Lista() {
                <h3>Avaliação 360 | Versão Web 0.1</h3>
                <Container elevation={5} style={containerStyle}>
 
-                  <div className="blocoPessoa" style={blockStyle}>
-                     <Grid style={gridStyle}>
-                        <Paper elevation={10} style={paperStyle}>
-                           {membros.map((membro) =>
-                              <div style={divStyle}>
-                                 <a className="nameList" href={'/membro/' + membro.idpessoa}>{membro.nomecompleto}</a>
-                              </div>
+                  <Bootbot type="submit" variant='contained' onClick={() => imprimeBlocos()} fullWidth style={btstilo2}> Ver Resultados</Bootbot>
 
-                           )}
-                        </ Paper>
-                     </ Grid>
+                  <div>
+                     {blocos}
                   </div>
 
                </Container>
+
             </div>
          </Grid>
       </div>
