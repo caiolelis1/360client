@@ -89,9 +89,8 @@ function Sistema() {
 
       }
 
-      //media = media / resultLength;
-      //const mediaArredondada = +(media.toFixed(1))
-      const mediaArredondada = resultLength
+      media = media / resultLength;
+      const mediaArredondada = +(media.toFixed(1))
 
       return mediaArredondada;
 
