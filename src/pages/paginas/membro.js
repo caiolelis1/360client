@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
-import { getTokenUser } from "../../services/auth";
 
 function Membro() {
 
-    
-   const [userId, setUserId] = useState();
    const [user, setUser] = useState({});
    const [notas, setNotas] = useState([]);
    const [blocos, setBlocos] = useState([]);
@@ -22,16 +19,6 @@ function Membro() {
    const params = useParams();
    let id = params.id;
 
-   const buscarLogin = (id) => {
-        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
-            userid: id,
-        }).then((response) => {
-            if(!((response.data[0].idpessoa===id)||(response.data[0].diretor===1)||(response.data[0].diretorGeral===1)||(response.data[0].capitao===1)||(response.data[0].diretorGeral===1)||(response.data[0].admin===1))){
-                window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
-            }
-
-        })
-    }   
 
    const buscarUser = (id) => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
@@ -54,12 +41,8 @@ function Membro() {
    }
 
    useEffect(() => {
-        setUserId(getTokenUser().id)
-        buscarUser(id);
-    }, [id])
-    useEffect(() =>{
-        buscarLogin(userId);
-    }, [userId])
+      buscarUser(id);
+   }, [id])
 
    function media(id, tipo) {
 
@@ -88,7 +71,26 @@ function Membro() {
 
    }
 
-   function arrayNota(id, tipo) {
+   function arrayNotaAux(id, tipo) {
+
+      const resultaux = notas.filter(item => item.referenciaidpessoa === id);
+      const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
+      let space = " - ";
+      var arrayNotas = [];
+      for (let i in result) {
+         console.log(result[i].nota)
+
+         if (result[i].nota) {
+            result[i].nota = parseInt(result[i].nota, 10);
+            arrayNotas.push(result[i].nota);
+            arrayNotas.push(space);
+
+         }
+      }
+      arrayNotas.pop();
+      return arrayNotas;
+   }
+   function arrayNotaDiretor(id, tipo) {
 
       const resultaux = notas.filter(item => item.referenciaidpessoa === id);
       const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
@@ -100,8 +102,32 @@ function Membro() {
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
 
-            arrayNotas.push(result[i].nota);
-            arrayNotas.push(space);
+            if (result[i].idavaliador) {
+               arrayNotas.push(result[i].nota);
+               arrayNotas.push(space);
+            }
+         }
+      }
+      arrayNotas.pop();
+      return arrayNotas;
+   }
+   function arrayNotaMembro(id, tipo) {
+
+      const resultaux = notas.filter(item => item.referenciaidpessoa === id);
+      const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
+      let space = " - ";
+      var arrayNotas = [];
+      for (let i in result) {
+         console.log(result[i].nota)
+
+         if (result[i].nota) {
+            result[i].nota = parseInt(result[i].nota, 10);
+
+            if (!(result[i].idavaliador)) {
+               arrayNotas.push(result[i].nota);
+               arrayNotas.push(space);
+            }
+
          }
       }
       arrayNotas.pop();
@@ -124,7 +150,7 @@ function Membro() {
    }
 
    function imprimeNotas(title, id) {
-      var aux = arrayNota(user.idpessoa, id)
+      var aux = arrayNotaAux(user.idpessoa, id)
 
       if (aux.length > 1) {
          return (
@@ -136,9 +162,8 @@ function Membro() {
                   {media(user.idpessoa, id)}
                </p>
                <p>Notas:</p>
-               <p>
-                  {arrayNota(user.idpessoa, id)}
-               </p>
+               <p>Avaliação dos Diretores: {arrayNotaDiretor(user.idpessoa, id)}</p>
+               <p>Avaliação dos Membros: {arrayNotaMembro(user.idpessoa, id)}</p>
 
             </form>
          )
@@ -150,7 +175,7 @@ function Membro() {
                <p className="tituloTipoAvaliacao">{title}</p>
                <p>Nota:</p>
                <p>
-                  {arrayNota(user.idpessoa, id)}
+                  {arrayNotaMembro(user.idpessoa, id)}
                </p>
 
             </form>
@@ -213,7 +238,7 @@ function Membro() {
                   <p className="tituloNomePessoa"> Feedbacks </p>
                   {imprimeFeedback("No que você acha que seu colega mandou bem nesse último mês?", 114)}
                   {imprimeFeedback("Qual ponto você acha que seu colega pode melhorar / desenvolver?", 124)}
-                  {imprimeFeedback("Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?", 134)}
+                  {imprimeFeedback("Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?", 134)}
                </Paper>
             </Grid>
          </div>
