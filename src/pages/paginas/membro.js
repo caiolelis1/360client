@@ -225,7 +225,7 @@ function Membro() {
 
                   <Bootbot type="submit" variant='contained' onClick={() => imprimeBlocos()} fullWidth style={btstilo2}> Ver Resultados</Bootbot>
                   <Typography>
-                     <Link href='avaliacao'>
+                     <Link href='../lista'>
                         Voltar Para a Lista.
                      </Link>
                   </Typography>
