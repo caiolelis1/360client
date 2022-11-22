@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
+import { getTokenUser } from "../../services/auth";
 
 function Membro() {
 
