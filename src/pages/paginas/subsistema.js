@@ -41,7 +41,7 @@ function Subsistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
          id: id,
       }).then((response) => {
-         setNotas(response.data);
+         setNotas([...notas, response.data]);
          console.log(response.data)
       })
    }
