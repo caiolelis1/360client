@@ -19,6 +19,8 @@ function Subsistema() {
    const params = useParams();
    let id = params.id;
 
+   let teste = [];
+
    const buscarSubsistema = (id) => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistema', {
          id: id,
@@ -44,12 +46,7 @@ function Subsistema() {
         for (let i = 0; i < response.data.length; i++) {
             
             console.log(response.data[i])
-            setNotas( // Replace the state
-            [ // with a new array
-              ...notas, // that contains all the old items
-              response.data[i] // and one new item at the end
-            ]
-          );
+            teste.push(response.data[i])
     
         }
       })
