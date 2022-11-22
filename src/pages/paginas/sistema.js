@@ -48,8 +48,12 @@ function Sistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
          id: id,
       }).then((response) => {
-        console.log(response.data[i])
-        teste.push(response.data[i])
+        for (let i = 0; i < response.data.length; i++) {
+            
+            console.log(response.data[i])
+            teste.push(response.data[i])
+    
+        }
       })
    }
 
