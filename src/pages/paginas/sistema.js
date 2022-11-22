@@ -20,7 +20,7 @@ function Sistema() {
    const params = useParams();
    let id = params.id;
 
-   
+
    let teste = [];
 
    const buscarSistema = (id) => {
@@ -48,12 +48,12 @@ function Sistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
          id: id,
       }).then((response) => {
-        for (let i = 0; i < response.data.length; i++) {
-            
+         for (let i = 0; i < response.data.length; i++) {
+
             console.log(response.data[i])
             teste.push(response.data[i])
-    
-        }
+
+         }
       })
    }
 
@@ -70,7 +70,7 @@ function Sistema() {
 
    function media(tipo) {
 
-    console.log(teste)
+      console.log(teste)
 
       const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
       let resultLength = 0;
@@ -89,8 +89,9 @@ function Sistema() {
 
       }
 
-      media = media / resultLength;
-      const mediaArredondada = +(media.toFixed(1))
+      //media = media / resultLength;
+      //const mediaArredondada = +(media.toFixed(1))
+      const mediaArredondada = resultLength
 
       return mediaArredondada;
 
@@ -135,11 +136,11 @@ function Sistema() {
                   {imprimeNotas("Cumprimento de tarefas", 44)}
                   {imprimeNotas("Comprometimento", 54)}
                   {imprimeNotas("Organização", 64)}
-                  {imprimeNotas("Imparcialidade", 74)}
-                  {imprimeNotas("Facilitador", 84)}
-                  {imprimeNotas("Dar Autonomia", 94)}
-                  {imprimeNotas("Acessibilidade", 104)}
-                  {imprimeNotas("Uso da Suati", 144)}
+                  {imprimeNotas("Imparcialidade (Diretor)", 74)}
+                  {imprimeNotas("Facilitador (Diretor)", 84)}
+                  {imprimeNotas("Dar Autonomia (Diretor)", 94)}
+                  {imprimeNotas("Acessibilidade (Diretor)", 104)}
+                  {imprimeNotas("Uso da Suati (Diretor)", 144)}
                </Paper>
 
             </Grid>
