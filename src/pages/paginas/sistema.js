@@ -4,15 +4,6 @@ import Axios from 'axios';
 import { useParams } from "react-router-dom";
 
 function Sistema() {
-
-   //buscar sistema no db
-
-   //buscar notas de cada membro no db
-
-   //fazer media total e de cada membro
-   //mostrar cada nota separadamente
-   //fazer grafico?
-
    const [sistema, setSistema] = useState({});
    const [users, setUsers] = useState([]);
    const [notas, setNotas] = useState([]);
@@ -168,7 +159,7 @@ function Sistema() {
 
                   <Bootbot type="submit" variant='contained' onClick={() => imprimeBlocos()} fullWidth style={btstilo2}> Ver Resultados</Bootbot>
                   <Typography>
-                     <Link href='avaliacao'>
+                     <Link href='../lista'>
                         Voltar Para a Lista.
                      </Link>
                   </Typography>
