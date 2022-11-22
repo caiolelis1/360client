@@ -4,11 +4,11 @@ import Axios from 'axios';
 
 
 function Lista() {
-   
-    const [blocos, setBlocos] = useState([]);
-    const [membros, setMembros] = useState([]);
-    const [subsistemas, setSubsistemas] = useState([]);
-    const [sistemas, setSistemas] = useState([]);
+
+   const [blocos, setBlocos] = useState([]);
+   const [membros, setMembros] = useState([]);
+   const [subsistemas, setSubsistemas] = useState([]);
+   const [sistemas, setSistemas] = useState([]);
 
 
    const containerStyle = {
@@ -34,18 +34,18 @@ function Lista() {
    }
 
    const buscarSubsistemas = () => {
-    Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas', {
-    }).then((response) => {
-       console.log(response.data)
-       setSubsistemas(response.data)
-    })
+      Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas', {
+      }).then((response) => {
+         console.log(response.data)
+         setSubsistemas(response.data)
+      })
    }
    const buscarSistemas = () => {
-    Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSistemas', {
-    }).then((response) => {
-       console.log(response.data)
-       setSistemas(response.data)
-    })
+      Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSistemas', {
+      }).then((response) => {
+         console.log(response.data)
+         setSistemas(response.data)
+      })
    }
 
    useEffect(() => {
@@ -65,6 +65,30 @@ function Lista() {
       children.push((
          <Container elevation={5} style={containerStyle}>
 
+            <div className="blocoPessoa" style={blockStyle}>
+               <Grid style={gridStyle}>
+                  <Paper elevation={10} style={paperStyle}>
+                     <p className="tituloNomePessoa">Sistema</p>
+                     {sistemas.map((sistema) =>
+                        <div style={divStyle}>
+                           <a className="nameList" href={'/sistema/' + sistema.idsistema}>{sistema.nome}</a>
+                        </div>
+                     )}
+                  </ Paper>
+               </ Grid>
+            </div>
+            <div className="blocoPessoa" style={blockStyle}>
+               <Grid style={gridStyle}>
+                  <Paper elevation={10} style={paperStyle}>
+                     <p className="tituloNomePessoa">Subsistema</p>
+                     {subsistemas.map((subsistema) =>
+                        <div style={divStyle}>
+                           <a className="nameList" href={'/subsistema/' + subsistema.idsubsistema}>{subsistema.nome}</a>
+                        </div>
+                     )}
+                  </ Paper>
+               </ Grid>
+            </div>
             <div className="blocoPessoa" style={blockStyle}>
                <Grid style={gridStyle}>
                   <Paper elevation={10} style={paperStyle}>
