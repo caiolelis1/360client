@@ -42,7 +42,7 @@ function Subsistema() {
          id: id,
       }).then((response) => {
          setNotas([...notas, response.data]);
-         console.log(response.data)
+         console.log(notas)
       })
    }
 
