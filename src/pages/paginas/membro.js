@@ -26,6 +26,7 @@ function Membro() {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
+            console.log("busquei login")
             if(response.data[0].admin!=1){
                 window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
             }
