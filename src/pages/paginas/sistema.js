@@ -20,6 +20,9 @@ function Sistema() {
    const params = useParams();
    let id = params.id;
 
+   
+   let teste = [];
+
    const buscarSistema = (id) => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSistema', {
          id: id,
@@ -45,8 +48,8 @@ function Sistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
          id: id,
       }).then((response) => {
-         setNotas([...notas, response.data]);
-         console.log(response.data)
+        console.log(response.data[i])
+        teste.push(response.data[i])
       })
    }
 
@@ -63,7 +66,9 @@ function Sistema() {
 
    function media(tipo) {
 
-      const result = notas.filter(item => item.referenciaidtipoavaliacao === tipo);
+    console.log(teste)
+
+      const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
