@@ -42,6 +42,8 @@ function Subsistema() {
          id: id,
       }).then((response) => {
         for (let i = 0; i < response.data.length; i++) {
+            
+            console.log(response.data[i])
             setNotas( // Replace the state
             [ // with a new array
               ...notas, // that contains all the old items
@@ -50,7 +52,6 @@ function Subsistema() {
           );
     
         }
-         console.log(response.data)
       })
    }
 
