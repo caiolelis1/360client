@@ -41,12 +41,15 @@ function Subsistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
          id: id,
       }).then((response) => {
-        setNotas( // Replace the state
-        [ // with a new array
-          ...notas, // that contains all the old items
-          response.data // and one new item at the end
-        ]
-      );
+        for (let i = 0; i < response.data.length; i++) {
+            setNotas( // Replace the state
+            [ // with a new array
+              ...notas, // that contains all the old items
+              response.data[i] // and one new item at the end
+            ]
+          );
+    
+        }
          console.log(response.data)
       })
    }
