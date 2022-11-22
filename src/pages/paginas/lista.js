@@ -4,13 +4,14 @@ import Axios from 'axios';
 
 
 function Lista() {
-
-   const [blocos, setBlocos] = useState([]);
    const [membros, setMembros] = useState([]);
    const [subsistemas, setSubsistemas] = useState([]);
    const [sistemas, setSistemas] = useState([]);
 
 
+   const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
+   const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
+   const gridStyle = { padding: 5 }
    const containerStyle = {
       padding: 20,
       margin: "20px auto",
@@ -54,65 +55,6 @@ function Lista() {
       buscarSistemas();
    }, [])
 
-   function imprimeBlocos() {
-      console.log("imprimindo blocos")
-      const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
-      const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
-      const gridStyle = { padding: 5 }
-      const aux = [];
-      let children = [];
-
-      children.push((
-         <Container elevation={5} style={containerStyle}>
-
-            <div className="blocoPessoa" style={blockStyle}>
-               <Grid style={gridStyle}>
-                  <Paper elevation={10} style={paperStyle}>
-                     <p className="tituloNomePessoa">Sistema</p>
-                     {sistemas.map((sistema) =>
-                        <div style={divStyle}>
-                           <a className="nameList" href={'/sistema/' + sistema.idsistema}>{sistema.nome}</a>
-                        </div>
-                     )}
-                  </ Paper>
-               </ Grid>
-            </div>
-            <div className="blocoPessoa" style={blockStyle}>
-               <Grid style={gridStyle}>
-                  <Paper elevation={10} style={paperStyle}>
-                     <p className="tituloNomePessoa">Subsistema</p>
-                     {subsistemas.map((subsistema) =>
-                        <div style={divStyle}>
-                           <a className="nameList" href={'/subsistema/' + subsistema.idsubsistema}>{subsistema.nome}</a>
-                        </div>
-                     )}
-                  </ Paper>
-               </ Grid>
-            </div>
-            <div className="blocoPessoa" style={blockStyle}>
-               <Grid style={gridStyle}>
-                  <Paper elevation={10} style={paperStyle}>
-                     <p className="tituloNomePessoa">Membros</p>
-                     {membros.map((membro) =>
-                        <div style={divStyle}>
-                           <a className="nameList" href={'/membro/' + membro.idpessoa}>{membro.nomecompleto}</a>
-                        </div>
-                     )}
-                  </ Paper>
-               </ Grid>
-            </div>
-
-         </Container>
-      ));
-
-      aux.push((
-         <React.Fragment>
-            {children}
-         </React.Fragment>
-      ))
-
-      setBlocos(aux);
-   }
 
    return (
       <div>
@@ -124,11 +66,47 @@ function Lista() {
 
                <h3>Avaliação 360 | Versão Web 0.1</h3>
                <Container elevation={5} style={containerStyle}>
-
-                  <Bootbot type="submit" variant='contained' onClick={() => imprimeBlocos()} fullWidth style={btstilo2}> Ver Resultados</Bootbot>
-
                   <div>
-                     {blocos}
+                     <Container elevation={5} style={containerStyle}>
+
+                        <div className="blocoPessoa" style={blockStyle}>
+                           <Grid style={gridStyle}>
+                              <Paper elevation={10} style={paperStyle}>
+                                 <p className="tituloNomePessoa">Sistema</p>
+                                 {sistemas.map((sistema) =>
+                                    <div style={divStyle}>
+                                       <a className="nameList" href={'/sistema/' + sistema.idsistema}>{sistema.nome}</a>
+                                    </div>
+                                 )}
+                              </ Paper>
+                           </ Grid>
+                        </div>
+                        <div className="blocoPessoa" style={blockStyle}>
+                           <Grid style={gridStyle}>
+                              <Paper elevation={10} style={paperStyle}>
+                                 <p className="tituloNomePessoa">Subsistema</p>
+                                 {subsistemas.map((subsistema) =>
+                                    <div style={divStyle}>
+                                       <a className="nameList" href={'/subsistema/' + subsistema.idsubsistema}>{subsistema.nome}</a>
+                                    </div>
+                                 )}
+                              </ Paper>
+                           </ Grid>
+                        </div>
+                        <div className="blocoPessoa" style={blockStyle}>
+                           <Grid style={gridStyle}>
+                              <Paper elevation={10} style={paperStyle}>
+                                 <p className="tituloNomePessoa">Membros</p>
+                                 {membros.map((membro) =>
+                                    <div style={divStyle}>
+                                       <a className="nameList" href={'/membro/' + membro.idpessoa}>{membro.nomecompleto}</a>
+                                    </div>
+                                 )}
+                              </ Paper>
+                           </ Grid>
+                        </div>
+
+                     </Container>
                   </div>
 
                </Container>
