@@ -4,8 +4,12 @@ import Axios from 'axios';
 
 
 function Lista() {
-   const [blocos, setBlocos] = useState([]);
-   const [membros, setMembros] = useState([]);
+   
+    const [blocos, setBlocos] = useState([]);
+    const [membros, setMembros] = useState([]);
+    const [subsistemas, setSubsistemas] = useState([]);
+    const [sistemas, setSistemas] = useState([]);
+
 
    const containerStyle = {
       padding: 20,
@@ -29,8 +33,25 @@ function Lista() {
       })
    }
 
+   const buscarSubsistemas = () => {
+    Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas', {
+    }).then((response) => {
+       console.log(response.data)
+       setSubsistemas(response.data)
+    })
+   }
+   const buscarSistemas = () => {
+    Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSistemas', {
+    }).then((response) => {
+       console.log(response.data)
+       setSistemas(response.data)
+    })
+   }
+
    useEffect(() => {
       buscarMembros();
+      buscarSubsistemas();
+      buscarSistemas();
    }, [])
 
    function imprimeBlocos() {
