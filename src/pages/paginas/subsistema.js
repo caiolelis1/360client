@@ -43,12 +43,12 @@ function Subsistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaAvaliacoesPessoa', {
          id: id,
       }).then((response) => {
-        for (let i = 0; i < response.data.length; i++) {
-            
+         for (let i = 0; i < response.data.length; i++) {
+
             console.log(response.data[i])
             teste.push(response.data[i])
-    
-        }
+
+         }
       })
    }
 
@@ -66,7 +66,7 @@ function Subsistema() {
 
    function media(tipo) {
 
-    console.log(teste)
+      console.log(teste)
 
       const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
       let resultLength = 0;
@@ -114,28 +114,55 @@ function Subsistema() {
       const aux = [];
       let children = [];
 
-      children.push((
-         <div className="blocoPessoa" style={blockStyle}>
-            <Grid style={gridStyle}>
-               <Paper elevation={10} style={paperStyle}>
-                  <p className="tituloNomePessoa">{subsistema.nome}</p>
-                  {imprimeNotas("Comunicação", 1)}
-                  {imprimeNotas("Companheirismo", 2)}
-                  {imprimeNotas("Pontualidade", 3)}
-                  {imprimeNotas("Proatividade", 4)}
-                  {imprimeNotas("Engajamento / Motivação", 5)}
-                  {imprimeNotas("Trabalho em Equipe", 6)}
-                  {imprimeNotas("Presença", 24)}
-                  {imprimeNotas("Participação", 34)}
-                  {imprimeNotas("Cumprimento de tarefas", 44)}
-                  {imprimeNotas("Comprometimento", 54)}
-                  {imprimeNotas("Organização", 64)}
-               </Paper>
+      if (subsistema.idsubsistema === 64 || subsistema.idsubsistema === 184) {
+         children.push((
+            <div className="blocoPessoa" style={blockStyle}>
+               <Grid style={gridStyle}>
+                  <Paper elevation={10} style={paperStyle}>
+                     <p className="tituloNomePessoa">{subsistema.nome}</p>
+                     {imprimeNotas("Comunicação", 1)}
+                     {imprimeNotas("Companheirismo", 2)}
+                     {imprimeNotas("Pontualidade", 3)}
+                     {imprimeNotas("Proatividade", 4)}
+                     {imprimeNotas("Engajamento / Motivação", 5)}
+                     {imprimeNotas("Trabalho em Equipe", 6)}
+                     {imprimeNotas("Imparcialidade (Diretor)", 74)}
+                     {imprimeNotas("Facilitador (Diretor)", 84)}
+                     {imprimeNotas("Dar Autonomia (Diretor)", 94)}
+                     {imprimeNotas("Acessibilidade (Diretor)", 104)}
+                     {imprimeNotas("Uso da Suati (Diretor)", 144)}
+                  </Paper>
 
-            </Grid>
-         </div>
+               </Grid>
+            </div>
 
-      ));
+         ));
+      }
+
+      else {
+         children.push((
+            <div className="blocoPessoa" style={blockStyle}>
+               <Grid style={gridStyle}>
+                  <Paper elevation={10} style={paperStyle}>
+                     <p className="tituloNomePessoa">{subsistema.nome}</p>
+                     {imprimeNotas("Comunicação", 1)}
+                     {imprimeNotas("Companheirismo", 2)}
+                     {imprimeNotas("Pontualidade", 3)}
+                     {imprimeNotas("Proatividade", 4)}
+                     {imprimeNotas("Engajamento / Motivação", 5)}
+                     {imprimeNotas("Trabalho em Equipe", 6)}
+                     {imprimeNotas("Presença", 24)}
+                     {imprimeNotas("Participação", 34)}
+                     {imprimeNotas("Cumprimento de tarefas", 44)}
+                     {imprimeNotas("Comprometimento", 54)}
+                     {imprimeNotas("Organização", 64)}
+                  </Paper>
+
+               </Grid>
+            </div>
+
+         ));
+      }
 
       aux.push((
          <React.Fragment key={subsistema.id}>
