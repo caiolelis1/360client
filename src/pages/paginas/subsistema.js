@@ -66,7 +66,7 @@ function Subsistema() {
 
    function media(tipo) {
 
-      const result = notas.filter(item => item.referenciaidtipoavaliacao === tipo);
+      const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
