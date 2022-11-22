@@ -26,8 +26,7 @@ function Membro() {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id,
         }).then((response) => {
-            console.log(response.data[0])
-            if(!(response.data[0].idpessoa===id||(response.data[0].diretor===1)||(response.data[0].diretorGeral===1)||(response.data[0].capitao===1)||(response.data[0].diretorGeral===1)||(response.data[0].admin===1))){
+            if(!((response.data[0].idpessoa===id)||(response.data[0].diretor===1)||(response.data[0].diretorGeral===1)||(response.data[0].capitao===1)||(response.data[0].diretorGeral===1)||(response.data[0].admin===1))){
                 window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
             }
 
