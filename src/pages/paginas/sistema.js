@@ -110,6 +110,7 @@ function Sistema() {
       let children = [];
 
       children.push((
+         //fazer if else da capitania ou nao
          <div className="blocoPessoa" style={blockStyle}>
             <Grid style={gridStyle}>
                <Paper elevation={10} style={paperStyle}>
