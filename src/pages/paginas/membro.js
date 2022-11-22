@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 
 function Membro() {
 
+    
+   const [userId, setUserId] = useState();
    const [user, setUser] = useState({});
    const [notas, setNotas] = useState([]);
    const [blocos, setBlocos] = useState([]);
@@ -19,6 +21,15 @@ function Membro() {
    const params = useParams();
    let id = params.id;
 
+   const buscarLogin = (id) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+            userid: id,
+        }).then((response) => {
+            if(response.data[0].admin!=1){
+                window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
+            }
+        })
+    }   
 
    const buscarUser = (id) => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
@@ -41,8 +52,12 @@ function Membro() {
    }
 
    useEffect(() => {
-      buscarUser(id);
-   }, [id])
+        setUserId(getTokenUser().id)
+        buscarUser(id);
+    }, [id])
+    useEffect(() =>{
+        buscarLogin(userId);
+    }, [userId])
 
    function media(id, tipo) {
 
@@ -196,7 +211,7 @@ function Membro() {
                   <p className="tituloNomePessoa"> Feedbacks </p>
                   {imprimeFeedback("No que você acha que seu colega mandou bem nesse último mês?", 114)}
                   {imprimeFeedback("Qual ponto você acha que seu colega pode melhorar / desenvolver?", 124)}
-                  {imprimeFeedback("Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?", 134)}
+                  {imprimeFeedback("Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?", 134)}
                </Paper>
             </Grid>
          </div>
