@@ -173,10 +173,7 @@ function Membro() {
          <div className="blocoPessoa" style={blockStyle}>
             <Grid style={gridStyle}>
                <Paper elevation={10} style={paperStyle}>
-
-                  <p className="tituloNomePessoa">
-                     {user.nomecompleto}
-                  </p>
+                  <p className="tituloNomePessoa">{user.nomecompleto}</p>
                   {imprimeNotas("Comunicação", 1)}
                   {imprimeNotas("Companheirismo", 2)}
                   {imprimeNotas("Pontualidade", 3)}
@@ -194,6 +191,7 @@ function Membro() {
                   {imprimeNotas("Acessibilidade", 104)}
                   {imprimeNotas("Uso da Suati", 144)}
                </Paper>
+
                <Paper elevation={10} style={paperStyle}>
                   <p className="tituloNomePessoa"> Feedbacks </p>
                   {imprimeFeedback("No que você acha que seu colega mandou bem nesse último mês?", 114)}
@@ -214,10 +212,6 @@ function Membro() {
       setBlocos(aux);
    }
 
-
-   //mostrar cada nota separadamente
-   //fazer grafico?
-
    return (
       <div>
          <Grid>
@@ -232,7 +226,7 @@ function Membro() {
                   <Bootbot type="submit" variant='contained' onClick={() => imprimeBlocos()} fullWidth style={btstilo2}> Ver Resultados</Bootbot>
                   <Typography>
                      <Link href='avaliacao'>
-                        Voltar Para a Avaliação.
+                        Voltar Para a Lista.
                      </Link>
                   </Typography>
                   <div>
