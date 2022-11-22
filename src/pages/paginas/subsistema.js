@@ -122,11 +122,6 @@ function Subsistema() {
                   {imprimeNotas("Cumprimento de tarefas", 44)}
                   {imprimeNotas("Comprometimento", 54)}
                   {imprimeNotas("Organização", 64)}
-                  {imprimeNotas("Imparcialidade", 74)}
-                  {imprimeNotas("Facilitador", 84)}
-                  {imprimeNotas("Dar Autonomia", 94)}
-                  {imprimeNotas("Acessibilidade", 104)}
-                  {imprimeNotas("Uso da Suati", 144)}
                </Paper>
 
             </Grid>
