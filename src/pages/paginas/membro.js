@@ -27,7 +27,7 @@ function Membro() {
             userid: id2,
         }).then((response) => {
             console.log(response.data[0].idpessoa + " " + id)
-            if(!( ( response.data[0].idpessoa==id ) || ( response.data[0].diretor==1 ) ) ){
+            if(!( ( response.data[0].idpessoa==id ) || ( response.data[0].diretor==1 && response.data[0].referenciaidsubsistema==user.referenciaidsubsistema) ) ){
                 console.log('PRECISA SER REDIRECIONADO')
             } else{
                console.log('PODE FICAR')
