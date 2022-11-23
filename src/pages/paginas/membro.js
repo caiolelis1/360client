@@ -27,7 +27,7 @@ function Membro() {
             userid: id2,
         }).then((response) => {
             console.log(response.data[0].referenciaidsubsistema + " " + user.referenciaidsubsistema)
-            if(!( ( response.data[0].idpessoa==id ) || ( response.data[0].diretor==1 && response.data[0].referenciaidsubsistema==user.referenciaidsubsistema ) || ( response.data[0].diretorGeral==1 && response.data[0].idsistema==user.idsistema ) ){
+            if(!( ( response.data[0].idpessoa==id ) || ( response.data[0].diretor==1 && response.data[0].referenciaidsubsistema==user.referenciaidsubsistema ) || ( response.data[0].diretorGeral==1 && response.data[0].idsistema==user.idsistema ) || ( response.data[0].capitao==1 ) ) ){
                 console.log('PRECISA SER REDIRECIONADO')
             } else{
                console.log('PODE FICAR')
