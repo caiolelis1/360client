@@ -63,7 +63,7 @@ function Membro() {
     }, [id])
     useEffect(() =>{
         buscarLogin(userId);
-    }, [userId])
+    }, [user])
 
    function media(id, tipo) {
 
