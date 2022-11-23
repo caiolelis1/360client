@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
+import { getTokenUser } from "../../services/auth";
 
 function Membro() {
 
+   
+   const [userId, setUserId] = useState();
    const [user, setUser] = useState({});
    const [notas, setNotas] = useState([]);
    const [blocos, setBlocos] = useState([]);
@@ -18,6 +21,18 @@ function Membro() {
 
    const params = useParams();
    let id = params.id;
+   
+   const buscarLogin = (id2) => {
+        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+            userid: id2,
+        }).then((response) => {
+            console.log(response.data[0])
+            if(response.data[0].idpessoa===id){
+                console.log('ehvc')
+            }
+
+        })
+    }   
 
 
    const buscarUser = (id) => {
@@ -41,8 +56,12 @@ function Membro() {
    }
 
    useEffect(() => {
-      buscarUser(id);
-   }, [id])
+        setUserId(getTokenUser().id)
+        buscarUser(id);
+    }, [id])
+    useEffect(() =>{
+        buscarLogin(userId);
+    }, [userId])
 
    function media(id, tipo) {
 
