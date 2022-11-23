@@ -26,7 +26,7 @@ function Membro() {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id2,
         }).then((response) => {
-            console.log(response.data[0].idpessoa + " " + id)
+            console.log(response.data[0].referenciaidsubsistema + " " + user.referenciaidsubsistema)
             if(!( ( response.data[0].idpessoa==id ) || ( response.data[0].diretor==1 && response.data[0].referenciaidsubsistema==user.referenciaidsubsistema) ) ){
                 console.log('PRECISA SER REDIRECIONADO')
             } else{
