@@ -26,7 +26,7 @@ function Membro() {
         Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
             userid: id2,
         }).then((response) => {
-            console.log(response.data[0])
+            console.log(response.data[0].idpessoa + " " + id)
             if(response.data[0].idpessoa===id){
                 console.log('ehvc')
             }
