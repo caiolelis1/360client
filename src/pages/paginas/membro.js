@@ -163,7 +163,7 @@ function Membro() {
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
 
-            if ((!(result[i].idavaliador))&&(result[i].autoavaliacao==0)) {
+            if ((!(result[i].idavaliador))&&(result[i].autoavaliacao!=1)) {
                arrayNotas.push(result[i].nota);
                arrayNotas.push(space);
             }
