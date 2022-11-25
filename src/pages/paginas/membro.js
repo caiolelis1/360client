@@ -109,6 +109,27 @@ function Membro() {
       arrayNotas.pop();
       return arrayNotas;
    }
+   function arrayNotaAutoavaliacao(id, tipo) {
+
+      const resultaux = notas.filter(item => item.referenciaidpessoa === id);
+      const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
+      let space = " - ";
+      var arrayNotas = [];
+      for (let i in result) {
+         console.log(result[i].nota)
+
+         if (result[i].nota) {
+            result[i].nota = parseInt(result[i].nota, 10);
+
+            if (result[i].autoavaliacao==1) {
+               arrayNotas.push(result[i].nota);
+               arrayNotas.push(space);
+            }
+         }
+      }
+      arrayNotas.pop();
+      return arrayNotas;
+   }
    function arrayNotaDiretor(id, tipo) {
 
       const resultaux = notas.filter(item => item.referenciaidpessoa === id);
@@ -181,6 +202,7 @@ function Membro() {
                   {media(user.idpessoa, id)}
                </p>
                <p>Notas:</p>
+               <p>Autoavaliação: {arrayNotaAutoavaliacao(user.idpessoa, id)}</p>
                <p>Avaliação dos Diretores: {arrayNotaDiretor(user.idpessoa, id)}</p>
                <p>Avaliação dos Membros: {arrayNotaMembro(user.idpessoa, id)}</p>
 
