@@ -6,7 +6,7 @@ import { getTokenUser } from "../../services/auth";
 
 function Membro() {
 
-   
+
    const [userId, setUserId] = useState();
    const [user, setUser] = useState({});
    const [notas, setNotas] = useState([]);
@@ -21,18 +21,18 @@ function Membro() {
 
    const params = useParams();
    let id = params.id;
-   
-   const buscarLogin = (id2) => {
-        Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
-            userid: id2,
-        }).then((response) => {
-            console.log(response.data[0].idsistema + " " + user.idsistema)
-            if(!( ( response.data[0].idpessoa==id ) || ( response.data[0].diretor==1 && response.data[0].referenciaidsubsistema==user.referenciaidsubsistema ) || ( response.data[0].diretorGeral==1 && response.data[0].sistemaID==user.sistemaID ) || ( response.data[0].capitao==1 ) || ( response.data[0].admin==1 ) ) ){
-                window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
-            }
 
-        })
-    }   
+   const buscarLogin = (id2) => {
+      Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
+         userid: id2,
+      }).then((response) => {
+         console.log(response.data[0].idsistema + " " + user.idsistema)
+         if (!((response.data[0].idpessoa == id) || (response.data[0].diretor == 1 && response.data[0].referenciaidsubsistema == user.referenciaidsubsistema) || (response.data[0].diretorGeral == 1 && response.data[0].sistemaID == user.sistemaID) || (response.data[0].capitao == 1) || (response.data[0].admin == 1))) {
+            window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
+         }
+
+      })
+   }
 
 
    const buscarUser = (id) => {
@@ -56,12 +56,12 @@ function Membro() {
    }
 
    useEffect(() => {
-        setUserId(getTokenUser().id)
-        buscarUser(id);
-    }, [id])
-    useEffect(() =>{
-        buscarLogin(userId);
-    }, [user])
+      setUserId(getTokenUser().id)
+      buscarUser(id);
+   }, [id])
+   useEffect(() => {
+      buscarLogin(userId);
+   }, [user])
 
    function media(id, tipo) {
 
@@ -121,7 +121,7 @@ function Membro() {
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
 
-            if (result[i].autoavaliacao==1) {
+            if (result[i].autoavaliacao == 1) {
                arrayNotas.push(result[i].nota);
                arrayNotas.push(space);
             }
@@ -163,7 +163,7 @@ function Membro() {
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
 
-            if ((!(result[i].idavaliador))&&(result[i].autoavaliacao!=1)) {
+            if ((!(result[i].idavaliador)) && (result[i].autoavaliacao != 1)) {
                arrayNotas.push(result[i].nota);
                arrayNotas.push(space);
             }
@@ -193,31 +193,41 @@ function Membro() {
       var aux = arrayNotaAux(user.idpessoa, id)
 
       if (aux.length > 1) {
-         return (
-            <form>
-               <p className="tituloTipoAvaliacao">{title}</p>
 
-               <p>Media:</p>
-               <p>
-                  {media(user.idpessoa, id)}
-               </p>
-               <p>Notas:</p>
-               <p>Autoavaliação: {arrayNotaAutoavaliacao(user.idpessoa, id)}</p>
-               <p>Avaliação dos Diretores: {arrayNotaDiretor(user.idpessoa, id)}</p>
-               <p>Avaliação dos Membros: {arrayNotaMembro(user.idpessoa, id)}</p>
+         if ((arrayNotaMembro(user.idpessoa, id).length > 0)) {
+            return (
+               <form>
+                  <p className="tituloTipoAvaliacao">{title}</p>
 
-            </form>
-         )
+                  <p>Media:</p>
+                  <p>
+                     {media(user.idpessoa, id)}
+                  </p>
+                  <p>Autoavaliação: {arrayNotaAutoavaliacao(user.idpessoa, id)}</p>
+                  <p>Avaliação dos Diretores: {arrayNotaDiretor(user.idpessoa, id)}</p>
+                  <p>Avaliação dos Membros: {arrayNotaMembro(user.idpessoa, id)}</p>
+
+               </form>
+            )
+         }
+         else {
+            return (
+               <form>
+                  <p className="tituloTipoAvaliacao">{title}</p>
+
+                  <p>Media: {media(user.idpessoa, id)}</p>
+                  <p>Autoavaliação: {arrayNotaAutoavaliacao(user.idpessoa, id)}</p>
+                  <p>Avaliação dos Diretores: {arrayNotaDiretor(user.idpessoa, id)}</p>
+               </form>
+            )
+         }
       }
 
       if (aux.length === 1) {
          return (
             <form>
                <p className="tituloTipoAvaliacao">{title}</p>
-               <p>Nota:</p>
-               <p>
-                  {arrayNotaMembro(user.idpessoa, id)}
-               </p>
+               <p>Nota: {arrayNotaAux(user.idpessoa, id)}</p>
 
             </form>
          )
