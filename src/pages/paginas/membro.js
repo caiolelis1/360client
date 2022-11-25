@@ -142,7 +142,7 @@ function Membro() {
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
 
-            if (!(result[i].idavaliador)) {
+            if ((!(result[i].idavaliador))&&(result[i].autoavaliacao==0)) {
                arrayNotas.push(result[i].nota);
                arrayNotas.push(space);
             }
@@ -257,7 +257,7 @@ function Membro() {
                   <p className="tituloNomePessoa"> Feedbacks </p>
                   {imprimeFeedback("No que você acha que seu colega mandou bem nesse último mês?", 114)}
                   {imprimeFeedback("Qual ponto você acha que seu colega pode melhorar / desenvolver?", 124)}
-                  {imprimeFeedback("Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?", 134)}
+                  {imprimeFeedback("Em 10 anos, você acha que o Tesla ainda será marcante em sua vida? Se sim, profissionalmente, emocionalmente ou os dois?", 134)}
                </Paper>
             </Grid>
          </div>
