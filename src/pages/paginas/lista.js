@@ -29,7 +29,6 @@ function Lista() {
    const buscarMembros = () => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaPessoasOrdem', {
       }).then((response) => {
-         console.log(response.data)
          setMembros(response.data)
       })
    }
@@ -37,14 +36,12 @@ function Lista() {
    const buscarSubsistemas = () => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistemas', {
       }).then((response) => {
-         console.log(response.data)
          setSubsistemas(response.data)
       })
    }
    const buscarSistemas = () => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSistemas', {
       }).then((response) => {
-         console.log(response.data)
          setSistemas(response.data)
       })
    }
