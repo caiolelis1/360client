@@ -27,7 +27,6 @@ function Sistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSistema', {
          id: id,
       }).then((response) => {
-         console.log(response.data[0])
          setSistema(response.data[0]);
       })
    }
@@ -38,7 +37,6 @@ function Sistema() {
          sistemaid: id,
       }).then((response) => {
          setUsers(response.data);
-         console.log(response);
          buscarNotas(id)
       })
 
@@ -50,7 +48,6 @@ function Sistema() {
       }).then((response) => {
          for (let i = 0; i < response.data.length; i++) {
 
-            console.log(response.data[i])
             teste.push(response.data[i])
 
          }
@@ -70,13 +67,11 @@ function Sistema() {
 
    function media(tipo) {
 
-      console.log(teste)
 
       const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
 
@@ -111,7 +106,6 @@ function Sistema() {
    }
 
    function imprimeBlocos() {
-      console.log("imprimindo blocos")
       const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
       const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
       const gridStyle = { padding: 5 }
