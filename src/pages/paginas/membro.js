@@ -26,7 +26,6 @@ function Membro() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUser', {
          userid: id2,
       }).then((response) => {
-         console.log(response.data[0].idsistema + " " + user.idsistema)
          if (!((response.data[0].idpessoa == id) || (response.data[0].diretor == 1 && response.data[0].referenciaidsubsistema == user.referenciaidsubsistema) || (response.data[0].diretorGeral == 1 && response.data[0].sistemaID == user.sistemaID) || (response.data[0].capitao == 1) || (response.data[0].admin == 1))) {
             window.location.replace("https://youthful-euclid-69864e.netlify.app/lista")
          }
@@ -40,7 +39,6 @@ function Membro() {
          userid: id,
       }).then((response) => {
          setUser(response.data[0]);
-         console.log(user);
          buscarNotas(id)
       })
 
@@ -51,7 +49,6 @@ function Membro() {
          id: id,
       }).then((response) => {
          setNotas(response.data);
-         console.log(response.data)
       })
    }
 
@@ -70,7 +67,6 @@ function Membro() {
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
 
@@ -97,7 +93,6 @@ function Membro() {
       let space = " - ";
       var arrayNotas = [];
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
@@ -116,7 +111,6 @@ function Membro() {
       let space = " - ";
       var arrayNotas = [];
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
@@ -137,7 +131,6 @@ function Membro() {
       let space = " - ";
       var arrayNotas = [];
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
@@ -158,7 +151,6 @@ function Membro() {
       let space = " - ";
       var arrayNotas = [];
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
             result[i].nota = parseInt(result[i].nota, 10);
@@ -180,7 +172,6 @@ function Membro() {
       const result = resultaux.filter(item => item.referenciaidtipoavaliacao === tipo);
       var arrayNotas = [];
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
             arrayNotas.push(result[i].nota);
@@ -255,7 +246,6 @@ function Membro() {
    }
 
    function imprimeBlocos() {
-      console.log("imprimindo blocos")
       const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
       const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
       const gridStyle = { padding: 5 }
