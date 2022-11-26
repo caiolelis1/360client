@@ -25,7 +25,6 @@ function Subsistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/selecionaSubsistema', {
          id: id,
       }).then((response) => {
-         console.log(response.data[0])
          setSubsistema(response.data[0])
       })
    }
@@ -34,7 +33,6 @@ function Subsistema() {
       Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUsersSubsistema', {
          subsistemaid: id,
       }).then((response) => {
-         console.log(response)
          setUsers(response.data)
       })
    }
@@ -45,7 +43,6 @@ function Subsistema() {
       }).then((response) => {
          for (let i = 0; i < response.data.length; i++) {
 
-            console.log(response.data[i])
             teste.push(response.data[i])
 
          }
@@ -58,7 +55,6 @@ function Subsistema() {
    }, [id]);
 
    useEffect(() => {
-      console.log(users)
       for (let i = 0; i < users.length; i++) {
          buscarNotas(users[i].idpessoa)
       }
@@ -66,13 +62,11 @@ function Subsistema() {
 
    function media(tipo) {
 
-      console.log(teste)
 
       const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
-         console.log(result[i].nota)
 
          if (result[i].nota) {
 
@@ -107,7 +101,6 @@ function Subsistema() {
    }
 
    function imprimeBlocos() {
-      console.log("imprimindo blocos")
       const paperStyle = { padding: 20, width: 600, margin: "20px auto" }
       const blockStyle = { color: "white", backgroundColor: "white", margin: "auto" }
       const gridStyle = { padding: 5 }
