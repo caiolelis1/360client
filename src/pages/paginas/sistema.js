@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
+import BarChart from '../../components/BarChart'
 
 function Sistema() {
+   const [grafico, setGrafico] = useState({});
    const [sistema, setSistema] = useState({});
    const [users, setUsers] = useState([]);
-   const [notas, setNotas] = useState([]);
    const [blocos, setBlocos] = useState([]);
 
    const containerStyle = { padding: 20, margin: "20px auto", maxWidth: 1200 };
@@ -16,11 +17,8 @@ function Sistema() {
       borderColor: '#4ed840',
    });
 
-
    const params = useParams();
    let id = params.id;
-
-
    let teste = [];
 
    const buscarSistema = (id) => {
@@ -30,7 +28,6 @@ function Sistema() {
          setSistema(response.data[0]);
       })
    }
-
 
    const buscarUsers = (id) => {
       Axios.post('https://avaliacao-360.herokuapp.com/api/buscarUsersSistema', {
@@ -66,28 +63,62 @@ function Sistema() {
    }, [users])
 
    function media(tipo) {
-
-
       const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
       let resultLength = 0;
       let media = 0;
       for (let i in result) {
-
          if (result[i].nota) {
-
             resultLength++;
-
             result[i].nota = parseInt(result[i].nota, 10);
-
             media += result[i].nota;
          }
-
       }
 
       media = media / resultLength;
       const mediaArredondada = +(media.toFixed(1))
 
       return mediaArredondada;
+   }
+
+   function imprimeGrafico(title, tipo) {
+      const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
+      let nota1 = 0, nota2 = 0, nota3 = 0, nota4 = 0, nota5 = 0, nota6 = 0, nota7 = 0;
+      for (let i in result) {
+
+         if (result[i].nota) {
+            if (result[i].nota === 1)
+               nota1++;
+            if (result[i].nota === 2)
+               nota2++;
+            if (result[i].nota === 3)
+               nota3++;
+            if (result[i].nota === 4)
+               nota4++;
+            if (result[i].nota === 5)
+               nota5++;
+            if (result[i].nota === 6)
+               nota6++;
+            if (result[i].nota === 7)
+               nota7++;
+         }
+      }
+
+      setGrafico({
+         labels: [1, 2, 3, 4, 5, 6, 7],
+         datasets: [
+            {
+               label: title,
+               data: [nota1, nota2, nota3, nota4, nota5, nota6, nota7],
+               backgroundColor: ["red", "orange", "orange", "yellow", "green", "green", "blue"],
+            },
+         ],
+      });
+
+      return (
+         <div>
+            <BarChart chartData={grafico} />
+         </div>
+      )
 
    }
 
@@ -99,6 +130,9 @@ function Sistema() {
             <p>Media:</p>
             <p>
                {media(id)}
+            </p>
+            <p>
+               {imprimeGrafico(title, id)}
             </p>
 
          </form>
