@@ -123,6 +123,7 @@ function Sistema() {
                height="250px"
                data={data}
                backgroundColor="green"
+               colors={["red", "orange", "orange", "yellow", "green", "green", "blue"]}
                options={options}
             />
          </div>
