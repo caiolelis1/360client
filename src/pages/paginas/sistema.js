@@ -112,6 +112,7 @@ function Sistema() {
          chart: {
             title: title,
             subtitle: sistema.nome,
+            colors: ["red", "orange", "orange", "yellow", "green", "green", "blue"],
          },
       };
       const graficoStyle = { padding: 10, width: 500, margin: "5px auto" }
@@ -122,8 +123,6 @@ function Sistema() {
                width="500px"
                height="250px"
                data={data}
-               backgroundColor="green"
-               colors={["red", "orange", "orange", "yellow", "green", "green", "blue"]}
                options={options}
             />
          </div>
