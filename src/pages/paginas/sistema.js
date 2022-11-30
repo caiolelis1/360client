@@ -109,10 +109,10 @@ function Sistema() {
       ];
 
       const options = {
+         colors: ['	#FF4500', '#D2691E', '#FFD700', '#FFFF00', '#7CFC00', '#20B2AA', '#4682B4'],
          chart: {
             title: title,
             subtitle: sistema.nome,
-            colors: ["red", "orange", "orange", "yellow", "green", "green", "blue"],
          },
       };
       const graficoStyle = { padding: 10, width: 500, margin: "5px auto" }
