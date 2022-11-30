@@ -114,12 +114,13 @@ function Sistema() {
             subtitle: sistema.nome,
          },
       };
-
+      const graficoStyle = { padding: 10, width: 420, margin: "5px auto" }
       return (
-         <div>
+         <div style={graficoStyle}>
             <Chart
                chartType="Bar"
-               width="70%"
+               width="420px"
+               height="400px"
                data={data}
                options={options}
             />
