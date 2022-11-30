@@ -103,7 +103,7 @@ function Sistema() {
       }
 
       const data = [
-         ["Nota", "Quantidade de votos"],
+         ["Nota", "Votos"],
          ["1", nota1], ["2", nota2], ["3", nota3],
          ["4", nota4], ["5", nota5], ["6", nota6], ["7", nota7],
       ];
@@ -114,14 +114,15 @@ function Sistema() {
             subtitle: sistema.nome,
          },
       };
-      const graficoStyle = { padding: 10, width: 420, margin: "5px auto" }
+      const graficoStyle = { padding: 10, width: 500, margin: "5px auto" }
       return (
          <div style={graficoStyle}>
             <Chart
                chartType="Bar"
-               width="420px"
-               height="400px"
+               width="500px"
+               height="250px"
                data={data}
+               backgroundColor="green"
                options={options}
             />
          </div>
