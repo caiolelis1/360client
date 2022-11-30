@@ -118,7 +118,7 @@ function Sistema() {
       return (
          <div style={graficoStyle}>
             <Chart
-               chartType="BarChart"
+               chartType="Bar"
                width="500px"
                height="250px"
                data={data}
@@ -134,10 +134,8 @@ function Sistema() {
          <form>
             <p className="tituloTipoAvaliacao">{title}</p>
 
-            <p>Media:</p>
-            <p>
-               {media(id)}
-            </p>
+            <p>Media: {media(id)}</p>
+            <br></br>
             <p>
                {imprimeGrafico(title, id)}
             </p>
