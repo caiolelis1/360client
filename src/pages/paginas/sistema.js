@@ -103,17 +103,15 @@ function Sistema() {
       }
 
       const data = [
-         ["Year", "Sales", "Expenses", "Profit"],
-         ["2014", 1000, 400, 200],
-         ["2015", 1170, 460, 250],
-         ["2016", 660, 1120, 300],
-         ["2017", 1030, 540, 350],
+         ["Nota", "Quantidade de votos"],
+         ["1", nota1], ["2", nota2], ["3", nota3],
+         ["4", nota4], ["5", nota5], ["6", nota6], ["7", nota7],
       ];
 
       const options = {
          chart: {
-            title: "Company Performance",
-            subtitle: "Sales, Expenses, and Profit: 2014-2017",
+            title: title,
+            subtitle: sistema.nome,
          },
       };
 
@@ -121,8 +119,7 @@ function Sistema() {
          <div>
             <Chart
                chartType="Bar"
-               width="100%"
-               height="400px"
+               width="70%"
                data={data}
                options={options}
             />
