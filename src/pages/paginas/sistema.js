@@ -113,7 +113,7 @@ function Sistema() {
             title: title,
             subtitle: sistema.nome,
          },
-         colors: 'green',
+         colors: '#4ed840',
       };
       const graficoStyle = { padding: 10, width: 500, margin: "5px auto" }
       return (
