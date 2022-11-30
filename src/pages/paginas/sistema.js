@@ -103,9 +103,9 @@ function Sistema() {
       }
 
       const data = [
-         ["Nota", "Votos", { role: "style" }],
-         ["1", nota1, '#FF4500'], ["2", nota2, '#D2691E'], ["3", nota3, '#FFD700'],
-         ["4", nota4, '#FFFF00'], ["5", nota5, '#7CFC00'], ["6", nota6, '#20B2AA'], ["7", nota7, '#4682B4'],
+         ["Nota", "Votos"],
+         ["1", nota1], ["2", nota2], ["3", nota3],
+         ["4", nota4], ["5", nota5], ["6", nota6], ["7", nota7],
       ];
 
       const options = {
@@ -113,6 +113,7 @@ function Sistema() {
             title: title,
             subtitle: sistema.nome,
          },
+         colors: 'green',
       };
       const graficoStyle = { padding: 10, width: 500, margin: "5px auto" }
       return (
