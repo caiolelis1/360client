@@ -103,13 +103,12 @@ function Sistema() {
       }
 
       const data = [
-         ["Nota", "Votos"],
-         ["1", nota1], ["2", nota2], ["3", nota3],
-         ["4", nota4], ["5", nota5], ["6", nota6], ["7", nota7],
+         ["Nota", "Votos", { role: "style" }],
+         ["1", nota1, '#FF4500'], ["2", nota2, '#D2691E'], ["3", nota3, '#FFD700'],
+         ["4", nota4, '#FFFF00'], ["5", nota5, '#7CFC00'], ["6", nota6, '#20B2AA'], ["7", nota7, '#4682B4'],
       ];
 
       const options = {
-         colors: ['	#FF4500', '#D2691E', '#FFD700', '#FFFF00', '#7CFC00', '#20B2AA', '#4682B4'],
          chart: {
             title: title,
             subtitle: sistema.nome,
@@ -119,7 +118,7 @@ function Sistema() {
       return (
          <div style={graficoStyle}>
             <Chart
-               chartType="Bar"
+               chartType="BarChart"
                width="500px"
                height="250px"
                data={data}
