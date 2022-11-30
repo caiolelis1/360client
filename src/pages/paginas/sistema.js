@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
-import BarChart from '../../components/BarChart'
+import { Chart } from "react-google-charts";
 
 function Sistema() {
-   const [grafico, setGrafico] = useState({});
    const [sistema, setSistema] = useState({});
    const [users, setUsers] = useState([]);
    const [blocos, setBlocos] = useState([]);
@@ -103,20 +102,30 @@ function Sistema() {
          }
       }
 
-      setGrafico({
-         labels: [1, 2, 3, 4, 5, 6, 7],
-         datasets: [
-            {
-               label: title,
-               data: [nota1, nota2, nota3, nota4, nota5, nota6, nota7],
-               backgroundColor: ["red", "orange", "orange", "yellow", "green", "green", "blue"],
-            },
-         ],
-      });
+      const data = [
+         ["Year", "Sales", "Expenses", "Profit"],
+         ["2014", 1000, 400, 200],
+         ["2015", 1170, 460, 250],
+         ["2016", 660, 1120, 300],
+         ["2017", 1030, 540, 350],
+      ];
+
+      const options = {
+         chart: {
+            title: "Company Performance",
+            subtitle: "Sales, Expenses, and Profit: 2014-2017",
+         },
+      };
 
       return (
          <div>
-            <BarChart chartData={grafico} />
+            <Chart
+               chartType="Bar"
+               width="100%"
+               height="400px"
+               data={data}
+               options={options}
+            />
          </div>
       )
 
