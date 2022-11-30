@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Grid, styled, Paper, Button, Container, Typography, Link } from "@material-ui/core"
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
+import { Chart } from "react-google-charts";
 
 function Subsistema() {
    const [subsistema, setSubsistema] = useState({});
@@ -86,14 +87,66 @@ function Subsistema() {
 
    }
 
+   function imprimeGrafico(title, tipo) {
+      const result = teste.filter(item => item.referenciaidtipoavaliacao === tipo);
+      let nota1 = 0, nota2 = 0, nota3 = 0, nota4 = 0, nota5 = 0, nota6 = 0, nota7 = 0;
+      for (let i in result) {
+
+         if (result[i].nota) {
+            if (result[i].nota === 1)
+               nota1++;
+            if (result[i].nota === 2)
+               nota2++;
+            if (result[i].nota === 3)
+               nota3++;
+            if (result[i].nota === 4)
+               nota4++;
+            if (result[i].nota === 5)
+               nota5++;
+            if (result[i].nota === 6)
+               nota6++;
+            if (result[i].nota === 7)
+               nota7++;
+         }
+      }
+
+      const data = [
+         ["Nota", "Votos"],
+         ["1", nota1], ["2", nota2], ["3", nota3],
+         ["4", nota4], ["5", nota5], ["6", nota6], ["7", nota7],
+      ];
+
+      const options = {
+         chart: {
+            title: title,
+            subtitle: subsistema.nome,
+         },
+         colors: '#4ed840',
+      };
+      const graficoStyle = { padding: 10, width: 500, margin: "5px auto" }
+      return (
+         <div style={graficoStyle}>
+            <Chart
+               chartType="Bar"
+               width="500px"
+               height="250px"
+               data={data}
+               options={options}
+            />
+         </div>
+      )
+
+   }
+
    function imprimeNotas(title, id) {
       return (
          <form>
             <p className="tituloTipoAvaliacao">{title}</p>
 
-            <p>Media:</p>
+            <p>Media: {media(id)}</p>
+            <br></br>
             <p>
-               {media(id)}
+               {imprimeGrafico(title, id)}
             </p>
 
          </form>
